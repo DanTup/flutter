@@ -6,6 +6,7 @@ import 'dart:async';
 import 'dart:convert' show UTF8;
 
 import 'package:archive/archive.dart';
+import 'package:flutter_tools/src/android/vscode_validator.dart';
 
 import 'android/android_studio_validator.dart';
 import 'android/android_workflow.dart';
@@ -43,6 +44,7 @@ class Doctor {
       final List<DoctorValidator> ideValidators = <DoctorValidator>[];
       ideValidators.addAll(AndroidStudioValidator.allValidators);
       ideValidators.addAll(IntelliJValidator.installedValidators);
+      ideValidators.addAll(VsCodeValidator.installedValidators);
       if (ideValidators.isNotEmpty)
         _validators.addAll(ideValidators);
       else
