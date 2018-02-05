@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:convert';
+
 import '../base/common.dart';
 import '../base/file_system.dart';
 import '../base/platform.dart';
@@ -43,16 +45,35 @@ class VsCode {
     return new VsCode(bundlePath, dataFolderName, version: version);
   }
 
+  factory VsCode.fromWindowsInstall(String installPath, String dataFolderName) {
+    final String packageJsonPath =
+        fs.path.join(installPath, 'resources', 'app', 'package.json');
+    final String versionString = _getVersionFromPackageJson(packageJsonPath);
+    Version version;
+    if (versionString != null) version = new Version.parse(versionString);
+    return new VsCode(installPath, dataFolderName, version: version);
+  }
+
   bool get isValid => _isValid;
 
   List<String> get validationMessages => _validationMessages;
 
-  static List<VsCode> allInstalled() =>
-      platform.isMacOS ? _allMacOS() : _allLinuxOrWindows();
+  static List<VsCode> allInstalled() {
+    if (platform.isMacOS)
+      return _installedMacOS();
+    else if (platform.isWindows)
+      return _installedWindows();
+    else if (platform.isLinux)
+      return _installedLinux();
+    else
+      // VS Code isn't supported on the other platforms.
+      return [];
+  }
 
-  static List<VsCode> _allMacOS() {
+  static List<VsCode> _installedMacOS() {
     final List<VsCode> results = <VsCode>[];
 
+// TODO: I don't know if it's actually valid to install in homeDirPath
     for (var root in ['/', homeDirPath]) {
       // VS Code
       var directory =
@@ -74,7 +95,18 @@ class VsCode {
     return results;
   }
 
-  static List<VsCode> _allLinuxOrWindows() {
+  static List<VsCode> _installedWindows() {
+    final List<VsCode> results = <VsCode>[];
+
+    var directory = fs.path
+        .join(platform.environment['programfiles(x86)'], 'Microsoft VS Code');
+    if (fs.directory(directory).existsSync())
+      results.add(new VsCode.fromWindowsInstall(directory, '.vscode'));
+
+    return results;
+  }
+
+  static List<VsCode> _installedLinux() {
     throw new UnimplementedError();
   }
 
@@ -107,4 +139,11 @@ class VsCode {
   @override
   String toString() =>
       'VS Code ($version)${(extensionVersion != Version.unknown ? ', Dart Code ($extensionVersion)' : '')}';
+
+  static String _getVersionFromPackageJson(String packageJsonPath) {
+    if (!fs.isFileSync(packageJsonPath)) return null;
+    final jsonString = fs.file(packageJsonPath).readAsStringSync();
+    Map json = JSON.decode(jsonString);
+    return json['version'];
+  }
 }

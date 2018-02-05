@@ -13,14 +13,10 @@ class VsCodeValidator extends DoctorValidator {
 
   VsCodeValidator(this._vsCode) : super('VS Code');
 
-  static List<DoctorValidator> get installedValidators {
-    final List<DoctorValidator> validators = <DoctorValidator>[];
-    final List<VsCode> vsCodes = VsCode.allInstalled();
-    if (vsCodes.isNotEmpty) {
-      validators
-          .addAll(vsCodes.map((VsCode vsCode) => new VsCodeValidator(vsCode)));
-    }
-    return validators;
+  static Iterable<DoctorValidator> get installedValidators {
+    return VsCode
+        .allInstalled()
+        .map((VsCode vsCode) => new VsCodeValidator(vsCode));
   }
 
   @override
