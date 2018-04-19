@@ -7,6 +7,7 @@ import 'dart:convert';
 
 import 'package:meta/meta.dart';
 
+import '../android/android_console.dart';
 import '../android/android_sdk.dart';
 import '../android/android_workflow.dart';
 import '../android/apk.dart';
@@ -120,6 +121,31 @@ class AndroidDevice extends Device {
       }
     }
     return _isLocalEmulator;
+  }
+
+  Future<String> get avdName async {
+    // TODO(dantup): Don't fetch this every time, cache it...
+    // Emulators always have IDs in the format emulator-(port) where port is the
+    // Android Console port number.
+    final RegExp emulatorPortRegex = new RegExp(r'emulator-(\d+)');
+    if (!(await isLocalEmulator))
+      return null;
+
+    try {
+      final Match portMatch = emulatorPortRegex.firstMatch(id);
+      if (portMatch == null || portMatch.groupCount < 1) {
+        return null;
+      }
+      final AndroidConsole console = await AndroidConsole.connect('localhost', int.parse(portMatch.group(1)));
+      final String avdName = await console.getAvdName();
+      console.destroy();
+      return avdName;
+    }
+    catch (e) {
+      // TODO(dantup): Should we surface this to the user or silently discard?
+      // Why might this fail?
+      return null;
+    }
   }
 
   @override

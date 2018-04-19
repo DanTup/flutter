@@ -314,6 +314,7 @@ abstract class Device {
       table.add(<String>[
         device.name,
         device.id,
+        (device is AndroidDevice ? await device.avdName ?? '' : ''),
         '${getNameForTargetPlatform(targetPlatform)}',
         '${await device.sdkNameAndVersion}$supportIndicator',
       ]);
