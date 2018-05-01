@@ -84,6 +84,9 @@ class FlutterTesterDevice extends Device {
   @override
   bool isSupported() => true;
 
+  bool _isRunning = false;
+  bool get isRunning => _isRunning;
+
   @override
   Future<LaunchResult> startApp(
     ApplicationPackage package, {
@@ -109,6 +112,7 @@ class FlutterTesterDevice extends Device {
 
     final List<String> command = <String>[
       shellPath,
+      // '--run-forever',
       '--non-interactive',
       '--enable-dart-profiling',
       '--packages=${PackageMap.globalPackagesPath}',
@@ -147,7 +151,12 @@ class FlutterTesterDevice extends Device {
     try {
       printTrace(command.join(' '));
 
+      _isRunning = true;
       _process = await processManager.start(command);
+      _process.exitCode.then((_) {
+        print('quitting');
+        _isRunning = false;
+      });
       _process.stdout
           .transform(utf8.decoder)
           .transform(const LineSplitter())
@@ -172,6 +181,7 @@ class FlutterTesterDevice extends Device {
       return new LaunchResult.succeeded(observatoryUri: observatoryUri);
     } catch (error) {
       printError('Failed to launch $package: $error');
+      _isRunning = false;
       return new LaunchResult.failed();
     }
   }

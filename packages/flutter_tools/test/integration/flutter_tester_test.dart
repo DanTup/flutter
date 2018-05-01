@@ -70,6 +70,29 @@ void main() {
 
       expect(await device.stopApp(null), isTrue);
     });
+
+    testUsingContext('keeps running', () async {
+      _writePubspec();
+      _writePackages();
+
+      final String mainPath = fs.path.join('lib', 'main.dart');
+      _writeFile(mainPath, r'''
+import 'dart:async';
+void main() {
+  print('Hello!');
+}
+''');
+
+      final LaunchResult result = await start(mainPath);
+      expect(result.started, isTrue);
+      expect(result.observatoryUri, isNotNull);
+
+      await new Future<void>.delayed(const Duration(seconds: 3000));
+      expect(device.isRunning, true);
+
+      print("stopping");
+      expect(await device.stopApp(null), isTrue);
+    });
   });
 }
 
