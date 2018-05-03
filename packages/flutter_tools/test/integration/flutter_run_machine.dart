@@ -44,7 +44,7 @@ void main() {
         }
       });
       flutterRun.errors.listen((String line) {
-        throw new Exception('Unexpected stdout running flutter run --machine: ' + line);
+        throw new Exception('Unexpected stderr running flutter run --machine: ' + line);
       });
 
       await flutterRun.exitCode;
