@@ -19,8 +19,11 @@ import 'package:flutter_tools/src/version.dart';
 import 'src/context.dart';
 
 final Clock _testClock = new Clock.fixed(new DateTime(2015, 1, 1));
-final DateTime _upToDateVersion = _testClock.agoBy(FlutterVersion.kVersionAgeConsideredUpToDate ~/ 2);
-final DateTime _outOfDateVersion = _testClock.agoBy(FlutterVersion.kVersionAgeConsideredUpToDate * 2);
+final DateTime _upToDateVersionDate = _testClock.agoBy(FlutterVersion.kVersionAgeConsideredUpToDate ~/ 2);
+const String _upToDateVersionString = '0.4.4';
+const String _upToDateVersionHash = '1235abcd';
+final DateTime _outOfDateVersionDate = _testClock.agoBy(FlutterVersion.kVersionAgeConsideredUpToDate * 2);
+const String _outOfDateVersionHash = '1234abcd';
 final DateTime _stampUpToDate = _testClock.agoBy(FlutterVersion.kCheckAgeConsideredUpToDate ~/ 2);
 final DateTime _stampOutOfDate = _testClock.agoBy(FlutterVersion.kCheckAgeConsideredUpToDate * 2);
 
@@ -45,8 +48,7 @@ void main() {
     when(mockProcessManager.runSync(
       <String>['git', 'log', '-n', '1', '--pretty=format:%H'],
       workingDirectory: anyNamed('workingDirectory'),
-      environment: anyNamed('environment'),
-    )).thenReturn(new ProcessResult(103, 0, '1234abcd', ''));
+    )).thenReturn(new ProcessResult(103, 0, _outOfDateVersionHash, ''));
     when(mockProcessManager.runSync(
       <String>['git', 'log', '-n', '1', '--pretty=format:%ar'],
       workingDirectory: anyNamed('workingDirectory'),
@@ -56,7 +58,12 @@ void main() {
       <String>['git', 'describe', '--match', 'v*.*.*', '--first-parent', '--long', '--tags'],
       workingDirectory: anyNamed('workingDirectory'),
       environment: anyNamed('environment'),
-    )).thenReturn(new ProcessResult(105, 0, 'v0.1.2-3-1234abcd', ''));
+    )).thenReturn(new ProcessResult(105, 0, 'v0.1.2-3-g$_outOfDateVersionHash', ''));
+    when(mockProcessManager.runSync(
+      <String>['git', 'describe', '__flutter_version_check__/master', '--match', 'v*.*.*', '--first-parent', '--long', '--tags'],
+      workingDirectory: anyNamed('workingDirectory'),
+      environment: anyNamed('environment'),
+    )).thenReturn(new ProcessResult(105, 0, 'v0.4.4-0-g$_upToDateVersionHash', ''));
   });
 
   group('$FlutterVersion', () {
@@ -69,10 +76,10 @@ void main() {
       fakeData(
         mockProcessManager,
         mockCache,
-        localCommitDate: _upToDateVersion,
+        localCommitDate: _upToDateVersionDate,
         // Server will be pinged because we haven't pinged within last x days
         expectServerPing: true,
-        remoteCommitDate: _outOfDateVersion,
+        remoteCommitDate: _outOfDateVersionDate,
         expectSetStamp: true);
       await FlutterVersion.instance.checkFlutterVersionFreshness();
       _expectVersionMessage('');
@@ -88,12 +95,12 @@ void main() {
       fakeData(
         mockProcessManager,
         mockCache,
-        localCommitDate: _outOfDateVersion,
+        localCommitDate: _outOfDateVersionDate,
         stamp: new VersionCheckStamp(
           lastTimeVersionWasChecked: _stampOutOfDate,
-          lastKnownRemoteVersion: _outOfDateVersion,
+          lastKnownRemoteVersionDate: _outOfDateVersionDate,
         ),
-        remoteCommitDate: _outOfDateVersion,
+        remoteCommitDate: _outOfDateVersionDate,
         expectSetStamp: true,
         expectServerPing: true,
       );
@@ -112,16 +119,26 @@ void main() {
       fakeData(
         mockProcessManager,
         mockCache,
-        localCommitDate: _outOfDateVersion,
+        localCommitDate: _outOfDateVersionDate,
         stamp: new VersionCheckStamp(
           lastTimeVersionWasChecked: _stampUpToDate,
-          lastKnownRemoteVersion: _upToDateVersion,
+          lastKnownRemoteVersionDate: _upToDateVersionDate,
+          lastKnownRemoteVersionString: _upToDateVersionString,
         ),
         expectSetStamp: true,
       );
 
       await version.checkFlutterVersionFreshness();
-      _expectVersionMessage(FlutterVersion.newVersionAvailableMessage());
+      _expectVersionMessage(
+          FlutterVersion.newVersionAvailableMessage(
+              new VersionCheckResults(
+                  'master',
+                  VersionStatus.newVersionAvailable,
+                  version.frameworkVersion,
+                  _upToDateVersionString
+              )
+          )
+      );
     }, overrides: <Type, Generator>{
       FlutterVersion: () => new FlutterVersion(_testClock),
       ProcessManager: () => mockProcessManager,
@@ -134,16 +151,26 @@ void main() {
       fakeData(
         mockProcessManager,
         mockCache,
-        localCommitDate: _outOfDateVersion,
+        localCommitDate: _outOfDateVersionDate,
         stamp: new VersionCheckStamp(
             lastTimeVersionWasChecked: _stampUpToDate,
-            lastKnownRemoteVersion: _upToDateVersion,
+            lastKnownRemoteVersionDate: _upToDateVersionDate,
+            lastKnownRemoteVersionString: _upToDateVersionString
         ),
         expectSetStamp: true,
       );
 
       await version.checkFlutterVersionFreshness();
-      _expectVersionMessage(FlutterVersion.newVersionAvailableMessage());
+      _expectVersionMessage(
+          FlutterVersion.newVersionAvailableMessage(
+              new VersionCheckResults(
+                  'master',
+                  VersionStatus.newVersionAvailable,
+                  version.frameworkVersion,
+                  _upToDateVersionString
+              )
+          )
+      );
       expect((await VersionCheckStamp.load()).lastTimeWarningWasPrinted, _testClock.now());
 
       await version.checkFlutterVersionFreshness();
@@ -160,20 +187,30 @@ void main() {
       fakeData(
         mockProcessManager,
         mockCache,
-        localCommitDate: _outOfDateVersion,
-        remoteCommitDate: _upToDateVersion,
+        localCommitDate: _outOfDateVersionDate,
+        remoteCommitDate: _upToDateVersionDate,
+        remoteCommitHash: _upToDateVersionHash,
         expectSetStamp: true,
         expectServerPing: true,
       );
 
       await version.checkFlutterVersionFreshness();
-      _expectVersionMessage(FlutterVersion.newVersionAvailableMessage());
+      _expectVersionMessage(
+          FlutterVersion.newVersionAvailableMessage(
+              new VersionCheckResults(
+                  'master',
+                  VersionStatus.newVersionAvailable,
+                  version.frameworkVersion,
+                  _upToDateVersionString
+              )
+          )
+      );
 
       // Immediate subsequent check is not expected to ping the server.
       fakeData(
         mockProcessManager,
         mockCache,
-        localCommitDate: _outOfDateVersion,
+        localCommitDate: _outOfDateVersionDate,
         stamp: await VersionCheckStamp.load(),
       );
       await version.checkFlutterVersionFreshness();
@@ -190,18 +227,28 @@ void main() {
       fakeData(
         mockProcessManager,
         mockCache,
-        localCommitDate: _outOfDateVersion,
+        localCommitDate: _outOfDateVersionDate,
         stamp: new VersionCheckStamp(
             lastTimeVersionWasChecked: _stampOutOfDate,
-            lastKnownRemoteVersion: _testClock.ago(days: 2),
+            lastKnownRemoteVersionDate: _testClock.ago(days: 2),
         ),
-        remoteCommitDate: _upToDateVersion,
+        remoteCommitDate: _upToDateVersionDate,
+        remoteCommitHash: _upToDateVersionHash,
         expectSetStamp: true,
         expectServerPing: true,
       );
 
       await version.checkFlutterVersionFreshness();
-      _expectVersionMessage(FlutterVersion.newVersionAvailableMessage());
+      _expectVersionMessage(
+          FlutterVersion.newVersionAvailableMessage(
+              new VersionCheckResults(
+                  'master',
+                  VersionStatus.newVersionAvailable,
+                  version.frameworkVersion,
+                  _upToDateVersionString
+              )
+          )
+      );
     }, overrides: <Type, Generator>{
       FlutterVersion: () => new FlutterVersion(_testClock),
       ProcessManager: () => mockProcessManager,
@@ -214,7 +261,7 @@ void main() {
       fakeData(
         mockProcessManager,
         mockCache,
-        localCommitDate: _upToDateVersion,
+        localCommitDate: _upToDateVersionDate,
         errorOnFetch: true,
         expectServerPing: true,
       );
@@ -233,14 +280,14 @@ void main() {
       fakeData(
         mockProcessManager,
         mockCache,
-        localCommitDate: _outOfDateVersion,
+        localCommitDate: _outOfDateVersionDate,
         errorOnFetch: true,
         expectServerPing: true,
         expectSetStamp: true
       );
 
       await version.checkFlutterVersionFreshness();
-      _expectVersionMessage(FlutterVersion.versionOutOfDateMessage(_testClock.now().difference(_outOfDateVersion)));
+      _expectVersionMessage(FlutterVersion.versionOutOfDateMessage(_testClock.now().difference(_outOfDateVersionDate)));
     }, overrides: <Type, Generator>{
       FlutterVersion: () => new FlutterVersion(_testClock),
       ProcessManager: () => mockProcessManager,
@@ -274,7 +321,7 @@ void main() {
 
   group('$VersionCheckStamp', () {
     void _expectDefault(VersionCheckStamp stamp) {
-      expect(stamp.lastKnownRemoteVersion, isNull);
+      expect(stamp.lastKnownRemoteVersionDate, isNull);
       expect(stamp.lastTimeVersionWasChecked, isNull);
       expect(stamp.lastTimeWarningWasPrinted, isNull);
     }
@@ -309,14 +356,14 @@ void main() {
     testUsingContext('loads valid JSON', () async {
       fakeData(mockProcessManager, mockCache, stampJson: '''
       {
-        "lastKnownRemoteVersion": "${_testClock.ago(days: 1)}",
+        "lastKnownRemoteVersionDate": "${_testClock.ago(days: 1)}",
         "lastTimeVersionWasChecked": "${_testClock.ago(days: 2)}",
         "lastTimeWarningWasPrinted": "${_testClock.now()}"
       }
       ''');
 
       final VersionCheckStamp stamp = await VersionCheckStamp.load();
-      expect(stamp.lastKnownRemoteVersion, _testClock.ago(days: 1));
+      expect(stamp.lastKnownRemoteVersionDate, _testClock.ago(days: 1));
       expect(stamp.lastTimeVersionWasChecked, _testClock.ago(days: 2));
       expect(stamp.lastTimeWarningWasPrinted, _testClock.now());
     }, overrides: <Type, Generator>{
@@ -331,14 +378,14 @@ void main() {
       _expectDefault(await VersionCheckStamp.load());
 
       final VersionCheckStamp stamp = new VersionCheckStamp(
-        lastKnownRemoteVersion: _testClock.ago(days: 1),
+        lastKnownRemoteVersionDate: _testClock.ago(days: 1),
         lastTimeVersionWasChecked: _testClock.ago(days: 2),
         lastTimeWarningWasPrinted: _testClock.now(),
       );
       await stamp.store();
 
       final VersionCheckStamp storedStamp = await VersionCheckStamp.load();
-      expect(storedStamp.lastKnownRemoteVersion, _testClock.ago(days: 1));
+      expect(storedStamp.lastKnownRemoteVersionDate, _testClock.ago(days: 1));
       expect(storedStamp.lastTimeVersionWasChecked, _testClock.ago(days: 2));
       expect(storedStamp.lastTimeWarningWasPrinted, _testClock.now());
     }, overrides: <Type, Generator>{
@@ -353,18 +400,18 @@ void main() {
       _expectDefault(await VersionCheckStamp.load());
 
       final VersionCheckStamp stamp = new VersionCheckStamp(
-        lastKnownRemoteVersion: _testClock.ago(days: 10),
+        lastKnownRemoteVersionDate: _testClock.ago(days: 10),
         lastTimeVersionWasChecked: _testClock.ago(days: 9),
         lastTimeWarningWasPrinted: _testClock.ago(days: 8),
       );
       await stamp.store(
-        newKnownRemoteVersion: _testClock.ago(days: 1),
+        newKnownRemoteVersionDate: _testClock.ago(days: 1),
         newTimeVersionWasChecked: _testClock.ago(days: 2),
         newTimeWarningWasPrinted: _testClock.now(),
       );
 
       final VersionCheckStamp storedStamp = await VersionCheckStamp.load();
-      expect(storedStamp.lastKnownRemoteVersion, _testClock.ago(days: 1));
+      expect(storedStamp.lastKnownRemoteVersionDate, _testClock.ago(days: 1));
       expect(storedStamp.lastTimeVersionWasChecked, _testClock.ago(days: 2));
       expect(storedStamp.lastTimeWarningWasPrinted, _testClock.now());
     }, overrides: <Type, Generator>{
@@ -385,7 +432,9 @@ void fakeData(
   ProcessManager pm,
   Cache cache, {
   DateTime localCommitDate,
+  String localCommitHash,
   DateTime remoteCommitDate,
+  String remoteCommitHash,
   VersionCheckStamp stamp,
   String stampJson,
   bool errorOnFetch = false,
@@ -436,6 +485,8 @@ void fakeData(
 
     if (argsAre('git', 'log', '-n', '1', '--pretty=format:%ad', '--date=iso')) {
       return success(localCommitDate.toString());
+    } else if (argsAre('git', 'log', '-n', '1', '--pretty=format:%H')) {
+      return success(localCommitHash ?? '');
     } else if (argsAre('git', 'remote')) {
       return success('');
     } else if (argsAre('git', 'remote', 'add', '__flutter_version_check__', 'https://github.com/flutter/flutter.git')) {
@@ -446,6 +497,8 @@ void fakeData(
       return errorOnFetch ? failure(128) : success('');
     } else if (remoteCommitDate != null && argsAre('git', 'log', '__flutter_version_check__/master', '-n', '1', '--pretty=format:%ad', '--date=iso')) {
       return success(remoteCommitDate.toString());
+    } else if (remoteCommitDate != null && argsAre('git', 'log', '__flutter_version_check__/master', '-n', '1', '--pretty=format:%H')) {
+      return success(remoteCommitHash ?? '');
     }
 
     throw new StateError('Unexpected call to ProcessManager.run(${invocation.positionalArguments}, ${invocation.namedArguments})');

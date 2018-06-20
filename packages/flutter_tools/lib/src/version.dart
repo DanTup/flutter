@@ -33,7 +33,7 @@ class FlutterVersion {
       _channel = 'unknown';
     }
 
-    _frameworkRevision = _runGit('git log -n 1 --pretty=format:%H');
+    _frameworkRevision = _latestGitRevision();
     _frameworkAge = _runGit('git log -n 1 --pretty=format:%ar');
     _frameworkVersion = GitTagVersion.determine().frameworkVersionFor(_frameworkRevision);
   }
@@ -129,6 +129,16 @@ class FlutterVersion {
     return _runSync(args, lenient: false);
   }
 
+  static String _latestGitRevision([String branch]) {
+    final List<String> args = <String>['git', 'log'];
+
+    if (branch != null)
+      args.add(branch);
+
+    args.addAll(<String>['-n', '1', '--pretty=format:%H']);
+    return _runSync(args, lenient: false);
+  }
+
   /// The name of the temporary git remote used to check for the latest
   /// available Flutter framework version.
   ///
@@ -141,7 +151,7 @@ class FlutterVersion {
   ///
   /// Throws [ToolExit] if a git command fails, for example, when the remote git
   /// repository is not reachable due to a network issue.
-  static Future<String> fetchRemoteFrameworkCommitDate(String branch) async {
+  static Future<RemoteVersion> fetchRemoteFrameworkCommit(String branch) async {
     await _removeVersionCheckRemoteIfExists();
     try {
       await _run(<String>[
@@ -152,7 +162,12 @@ class FlutterVersion {
         'https://github.com/flutter/flutter.git',
       ]);
       await _run(<String>['git', 'fetch', _versionCheckRemote, branch]);
-      return _latestGitCommitDate('$_versionCheckRemote/$branch');
+      final String remoteBranch = '$_versionCheckRemote/$branch';
+      final String revision = _latestGitRevision(remoteBranch);
+      return new RemoteVersion(
+          DateTime.parse(_latestGitCommitDate(remoteBranch)),
+          GitTagVersion.determine(remoteBranch).frameworkVersionFor(revision)
+      );
     } finally {
       await _removeVersionCheckRemoteIfExists();
     }
@@ -237,22 +252,30 @@ class FlutterVersion {
     final bool installationSeemsOutdated = frameworkAge > kVersionAgeConsideredUpToDate;
 
     /// Gets whether or not there is a new version of Flutter available on the remote.
-    Future<VersionCheckResult> newerFrameworkVersionAvailable() async {
-      final DateTime latestFlutterCommitDate = await _getLatestAvailableFlutterVersion();
+    Future<VersionCheckResults> newerFrameworkVersionAvailable() async {
+      final String officialChannel = officialChannels.contains(_channel) ? _channel : 'master';
+      final RemoteVersion latestFlutterCommit = await _getLatestAvailableFlutterVersion(officialChannel);
 
-      if (latestFlutterCommitDate == null)
-        return VersionCheckResult.unknown;
+      if (latestFlutterCommit == null)
+        return new VersionCheckResults(officialChannel, VersionStatus.unknown);
 
-      return latestFlutterCommitDate.isAfter(localFrameworkCommitDate)
-          ? VersionCheckResult.newVersionAvailable
-          : VersionCheckResult.versionIsCurrent;
+      final VersionStatus status = latestFlutterCommit.commitDate.isAfter(localFrameworkCommitDate)
+          ? VersionStatus.newVersionAvailable
+          : VersionStatus.versionIsCurrent;
+
+          return new VersionCheckResults(
+              officialChannel,
+              status,
+              _frameworkVersion,
+              latestFlutterCommit.version,
+          );
     }
 
     // Get whether there's a newer version on the remote. This only goes
     // to the server if we haven't checked recently so won't happen often.
     // Note: This must come before the stamp load below because it also reads/writes
     // the stamp and otherwise one will be stale.
-    final VersionCheckResult remoteVersion = await newerFrameworkVersionAvailable();
+    final VersionCheckResults versionCheckResult = await newerFrameworkVersionAvailable();
     final VersionCheckStamp stamp = await VersionCheckStamp.load();
     final DateTime lastTimeWarningWasPrinted = stamp.lastTimeWarningWasPrinted ?? _clock.agoBy(kMaxTimeSinceLastWarning * 2);
     final bool beenAWhileSinceWarningWasPrinted = _clock.now().difference(lastTimeWarningWasPrinted) > kMaxTimeSinceLastWarning;
@@ -260,12 +283,12 @@ class FlutterVersion {
     // We show a warning if either we know there is a new remote version, or we couldn't tell but the local
     // version is outdated.
     final bool canShowWarning =
-      remoteVersion == VersionCheckResult.newVersionAvailable
-      || remoteVersion == VersionCheckResult.unknown && installationSeemsOutdated;
+      versionCheckResult.status == VersionStatus.newVersionAvailable
+      || versionCheckResult.status == VersionStatus.unknown && installationSeemsOutdated;
     
     if (beenAWhileSinceWarningWasPrinted && canShowWarning) {
-      final String updateMessage = remoteVersion == VersionCheckResult.newVersionAvailable
-          ? newVersionAvailableMessage()
+      final String updateMessage = versionCheckResult.status == VersionStatus.newVersionAvailable
+          ? newVersionAvailableMessage(versionCheckResult)
           : versionOutOfDateMessage(frameworkAge);
       printStatus(updateMessage, emphasis: true);
       await Future.wait<Null>(<Future<Null>>[
@@ -293,10 +316,17 @@ class FlutterVersion {
   }
 
   @visibleForTesting
-  static String newVersionAvailableMessage() {
+  static String newVersionAvailableMessage(VersionCheckResults versionResults) {
+    String pad(String s) {
+      return s + ' ' * (74 - s.length);
+    }
     return '''
   ╔════════════════════════════════════════════════════════════════════════════╗
   ║ A new version of Flutter is available!                                     ║
+  ║                                                                            ║
+  ║ ${pad('Channel:           ${versionResults.channel}')} ║
+  ║ ${pad('Your version:      ${versionResults.localDate}')} ║
+  ║ ${pad('Available version: ${versionResults.remoteDate}')} ║
   ║                                                                            ║
   ║ To update to the latest version, run "flutter upgrade".                    ║
   ╚════════════════════════════════════════════════════════════════════════════╝
@@ -310,7 +340,7 @@ class FlutterVersion {
   ///
   /// Returns null if the cached version is out-of-date or missing, and we are
   /// unable to reach the server to get the latest version.
-  Future<DateTime> _getLatestAvailableFlutterVersion() async {
+  Future<RemoteVersion> _getLatestAvailableFlutterVersion(String channel) async {
     Cache.checkLockAcquired();
     final VersionCheckStamp versionCheckStamp = await VersionCheckStamp.load();
 
@@ -319,18 +349,21 @@ class FlutterVersion {
 
       // Don't ping the server too often. Return cached value if it's fresh.
       if (timeSinceLastCheck < kCheckAgeConsideredUpToDate)
-        return versionCheckStamp.lastKnownRemoteVersion;
+        return new RemoteVersion(
+          versionCheckStamp.lastKnownRemoteVersionDate,
+          versionCheckStamp.lastKnownRemoteVersionString,
+        );
     }
 
     // Cache is empty or it's been a while since the last server ping. Ping the server.
     try {
-      final String branch = officialChannels.contains(_channel) ? _channel : 'master';
-      final DateTime remoteFrameworkCommitDate = DateTime.parse(await FlutterVersion.fetchRemoteFrameworkCommitDate(branch));
+      final RemoteVersion remoteFrameworkCommit = await FlutterVersion.fetchRemoteFrameworkCommit(channel);
       await versionCheckStamp.store(
         newTimeVersionWasChecked: _clock.now(),
-        newKnownRemoteVersion: remoteFrameworkCommitDate,
+        newKnownRemoteVersionDate: remoteFrameworkCommit.commitDate,
+        newKnownRemoteVersionString: remoteFrameworkCommit.version,
       );
-      return remoteFrameworkCommitDate;
+      return remoteFrameworkCommit;
     } on VersionCheckError catch (error) {
       // This happens when any of the git commands fails, which can happen when
       // there's no Internet connectivity. Remote version check is best effort
@@ -350,12 +383,14 @@ class VersionCheckStamp {
 
   const VersionCheckStamp({
     this.lastTimeVersionWasChecked,
-    this.lastKnownRemoteVersion,
+    this.lastKnownRemoteVersionDate,
+    this.lastKnownRemoteVersionString,
     this.lastTimeWarningWasPrinted,
   });
 
   final DateTime lastTimeVersionWasChecked;
-  final DateTime lastKnownRemoteVersion;
+  final DateTime lastKnownRemoteVersionDate;
+  final String lastKnownRemoteVersionString;
   final DateTime lastTimeWarningWasPrinted;
 
   static Future<VersionCheckStamp> load() async {
@@ -389,14 +424,16 @@ class VersionCheckStamp {
 
     return new VersionCheckStamp(
       lastTimeVersionWasChecked: readDateTime('lastTimeVersionWasChecked'),
-      lastKnownRemoteVersion: readDateTime('lastKnownRemoteVersion'),
+      lastKnownRemoteVersionDate: readDateTime('lastKnownRemoteVersionDate'),
+      lastKnownRemoteVersionString: jsonObject['lastKnownRemoteVersionString'],
       lastTimeWarningWasPrinted: readDateTime('lastTimeWarningWasPrinted'),
     );
   }
 
   Future<Null> store({
     DateTime newTimeVersionWasChecked,
-    DateTime newKnownRemoteVersion,
+    DateTime newKnownRemoteVersionDate,
+    String newKnownRemoteVersionString,
     DateTime newTimeWarningWasPrinted,
   }) async {
     final Map<String, String> jsonData = toJson();
@@ -404,8 +441,11 @@ class VersionCheckStamp {
     if (newTimeVersionWasChecked != null)
       jsonData['lastTimeVersionWasChecked'] = '$newTimeVersionWasChecked';
 
-    if (newKnownRemoteVersion != null)
-      jsonData['lastKnownRemoteVersion'] = '$newKnownRemoteVersion';
+    if (newKnownRemoteVersionString != null)
+      jsonData['lastKnownRemoteVersionString'] = '$newKnownRemoteVersionString';
+
+    if (newKnownRemoteVersionDate != null)
+      jsonData['lastKnownRemoteVersionDate'] = '$newKnownRemoteVersionDate';
 
     if (newTimeWarningWasPrinted != null)
       jsonData['lastTimeWarningWasPrinted'] = '$newTimeWarningWasPrinted';
@@ -416,11 +456,13 @@ class VersionCheckStamp {
 
   Map<String, String> toJson({
     DateTime updateTimeVersionWasChecked,
-    DateTime updateKnownRemoteVersion,
+    DateTime updateKnownRemoteVersionDate,
+    String updateKnownRemoteVersionString,
     DateTime updateTimeWarningWasPrinted,
   }) {
     updateTimeVersionWasChecked = updateTimeVersionWasChecked ?? lastTimeVersionWasChecked;
-    updateKnownRemoteVersion = updateKnownRemoteVersion ?? lastKnownRemoteVersion;
+    updateKnownRemoteVersionDate = updateKnownRemoteVersionDate ?? lastKnownRemoteVersionDate;
+    updateKnownRemoteVersionString = updateKnownRemoteVersionString ?? lastKnownRemoteVersionString;
     updateTimeWarningWasPrinted = updateTimeWarningWasPrinted ?? lastTimeWarningWasPrinted;
 
     final Map<String, String> jsonData = <String, String>{};
@@ -428,8 +470,11 @@ class VersionCheckStamp {
     if (updateTimeVersionWasChecked != null)
       jsonData['lastTimeVersionWasChecked'] = '$updateTimeVersionWasChecked';
 
-    if (updateKnownRemoteVersion != null)
-      jsonData['lastKnownRemoteVersion'] = '$updateKnownRemoteVersion';
+    if (updateKnownRemoteVersionDate != null)
+      jsonData['lastKnownRemoteVersionDate'] = '$updateKnownRemoteVersionDate';
+
+    if (updateKnownRemoteVersionString != null)
+      jsonData['lastKnownRemoteVersionString'] = '$updateKnownRemoteVersionString';
 
     if (updateTimeWarningWasPrinted != null)
       jsonData['lastTimeWarningWasPrinted'] = '$updateTimeWarningWasPrinted';
@@ -518,8 +563,9 @@ class GitTagVersion {
   /// The git hash (or an abbreviation thereof) for this commit.
   final String hash;
 
-  static GitTagVersion determine() {
-    final String version = _runGit('git describe --match v*.*.* --first-parent --long --tags');
+  static GitTagVersion determine([String remote = '']) {
+    final String command = 'git describe $remote'.trim();
+    final String version = _runGit('$command --match v*.*.* --first-parent --long --tags');
     final RegExp versionPattern = new RegExp('^v([0-9]+)\.([0-9]+)\.([0-9]+)-([0-9]+)-g([a-f0-9]+)\$');
     final List<String> parts = versionPattern.matchAsPrefix(version)?.groups(<int>[1, 2, 3, 4, 5]);
     if (parts == null) {
@@ -542,7 +588,21 @@ class GitTagVersion {
   }
 }
 
-enum VersionCheckResult {
+class RemoteVersion {
+  final DateTime commitDate;
+  final String version;
+  RemoteVersion(this.commitDate, this.version);
+}
+
+class VersionCheckResults {
+  final String channel;
+  final String remoteDate;
+  final String localDate;
+  final VersionStatus status;
+  VersionCheckResults(this.channel, this.status, [this.localDate, this.remoteDate]);
+}
+
+enum VersionStatus {
   /// Unable to check whether a new version is available, possibly due to
   /// a connectivity issue.
   unknown,
