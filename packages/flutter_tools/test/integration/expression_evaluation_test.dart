@@ -16,53 +16,33 @@ BasicProject _project = new BasicProject();
 FlutterTestDriver _flutter;
 
 void main() {
-  setUp(() async {
-    final Directory tempDir = await fs.systemTempDirectory.createTemp('test_app');
-    await _project.setUpIn(tempDir);
-    _flutter = new FlutterTestDriver(tempDir);
-  });
+  group('expression evaluation', () {
+    setUp(() async {
+      final Directory tempDir = await fs.systemTempDirectory.createTemp('test_app');
+      await _project.setUpIn(tempDir);
+      _flutter = new FlutterTestDriver(tempDir);
+    });
 
-  tearDown(() async {
-    try {
-      await _flutter.stop();
-      _project.cleanup();
-    } catch (e) {
-      // Don't fail tests if we failed to clean up temp folder.
+    tearDown(() async {
+      try {
+        await _flutter.stop();
+        _project.cleanup();
+      } catch (e) {
+        // Don't fail tests if we failed to clean up temp folder.
+      }
+    });
+
+    Future<VMIsolate> breakInBuildMethod(FlutterTestDriver flutter) async {
+      return _flutter.breakAt(
+          _project.buildMethodBreakpointFile,
+          _project.buildMethodBreakpointLine);
     }
-  });
 
-  Future<VMIsolate> breakInBuildMethod(FlutterTestDriver flutter) async {
-    return _flutter.breakAt(
-        _project.buildMethodBreakpointFile,
-        _project.buildMethodBreakpointLine);
-  }
-
-  Future<VMIsolate> breakInTopLevelFunction(FlutterTestDriver flutter) async {
-    return _flutter.breakAt(
-        _project.topLevelFunctionBreakpointFile,
-        _project.topLevelFunctionBreakpointLine);
-  }
-
-  group('FlutterTesterDevice', () {
-    test('can hot reload', () async {
-      await _flutter.run();
-      await _flutter.hotReload();
-    }, skip: true); // https://github.com/flutter/flutter/issues/17833
-
-    test('can hit breakpoints with file:// prefixes after reload', () async {
-      await _flutter.run(withDebugger: true);
-
-      // Add a breakpoint using a file:// URI.
-      await _flutter.addBreakpoint(
-          new Uri.file(_project.breakpointFile).toString(),
-          _project.breakpointLine);
-
-      await _flutter.hotReload();
-
-      // Ensure we hit the breakpoint.
-      final VMIsolate isolate = await _flutter.waitForBreakpointHit();
-      expect(isolate.pauseEvent, const isInstanceOf<VMPauseBreakpointEvent>());
-    }, skip: true); // https://github.com/flutter/flutter/issues/18441
+    Future<VMIsolate> breakInTopLevelFunction(FlutterTestDriver flutter) async {
+      return _flutter.breakAt(
+          _project.topLevelFunctionBreakpointFile,
+          _project.topLevelFunctionBreakpointLine);
+    }
 
     Future<void> evaluateTrivialExpressions() async {
       VMInstanceRef res;
