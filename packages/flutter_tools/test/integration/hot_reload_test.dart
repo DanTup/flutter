@@ -46,6 +46,15 @@ void main() {
       );
     });
 
+    test('hits breakpoints after reload', () async {
+      await _flutter.run(withDebugger: true);
+      
+      final VMIsolate isolate = await _flutter.breakAt(_project.breakpointFile,
+          _project.breakpointLine);
+
+      expect(isolate.pauseEvent, const isInstanceOf<VMPauseBreakpointEvent>());
+    }, skip: true); // https://github.com/flutter/flutter/issues/17833
+
     test('hits breakpoints with file:// prefixes after reload', () async {
       await _flutter.run(withDebugger: true);
 
