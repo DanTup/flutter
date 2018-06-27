@@ -93,7 +93,8 @@ class FlutterTestDriver {
         '--machine',
         '-d',
         'flutter-tester',
-        '--observatory-port=0',
+        '--observatory-port',
+        '0',
     ];
     if (_printJsonAndStderr) {
       print('Spawning $command in ${projectDir.path}');
