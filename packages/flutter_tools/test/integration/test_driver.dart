@@ -14,7 +14,7 @@ import 'package:vm_service_client/vm_service_client.dart';
 import '../src/common.dart';
 
 // Set this to true for debugging to get JSON written to stdout.
-const bool _printJsonAndStderr = false;
+const bool _printJsonAndStderr = true;
 
 class FlutterTestDriver {
   Directory _projectFolder;
