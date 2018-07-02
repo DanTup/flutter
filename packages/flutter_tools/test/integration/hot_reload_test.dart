@@ -76,6 +76,6 @@ void main() {
       },
         throwsA(anything)
       );
-    });
+    }, skip: true);
   }, timeout: const Timeout.factor(3));
 }
