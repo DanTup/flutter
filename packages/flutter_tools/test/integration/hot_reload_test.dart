@@ -51,7 +51,15 @@ void main() {
 
       // This test fails due to // https://github.com/flutter/flutter/issues/18441
       // If you merge a fix for this and the test starts failing because it's not
-      // throwing, delete the wrapping expect/return below.
+      // timing out, delete the wrapping expect below and `await` the result directly.
+      // If it still fails on Windows, that may be because of 
+      // https://github.com/flutter/flutter/issues/17833 (see test above)
+      // in which change the expectation to:
+      // 
+      //    platform.isWindows ? throwsA(anything) : completes
+      // 
+      // and one the windows issue is fixed, then the expectation can be removed
+      // and the breakAt call `await`ed directly.
       // (dantup)
       //
       // final VMIsolate isolate = await _flutter.breakAt(
@@ -66,8 +74,7 @@ void main() {
             _project.breakpointLine
         );
         expect(isolate.pauseEvent, const isInstanceOf<VMPauseBreakpointEvent>());
-      }(), platform.isLinux ? completes : throwsA(anything)
-      );
+      }(), platform.isLinux ? completes : throwsA(anything));
     });
   }, timeout: const Timeout.factor(3));
 }
