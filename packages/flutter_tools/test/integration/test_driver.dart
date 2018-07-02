@@ -22,6 +22,7 @@ class FlutterTestDriver {
   final StreamController<String> _stdout = new StreamController<String>.broadcast();
   final StreamController<String> _stderr = new StreamController<String>.broadcast();
   final StringBuffer _errorBuffer = new StringBuffer();
+  String _lastResponse;
   String _currentRunningAppId;
 
   FlutterTestDriver(this._projectFolder);
@@ -71,7 +72,7 @@ class FlutterTestDriver {
     );
 
     if (hotReloadResp == null || hotReloadResp['code'] != 0)
-      throw 'Hot reload request failed\n\n${_errorBuffer.toString()}';
+      _throwErrorResponse('Hot reload request failed');
   }
 
   Future<int> stop() async {
@@ -176,7 +177,9 @@ class FlutterTestDriver {
   Map<String, dynamic> _parseFlutterResponse(String line) {
     if (line.startsWith('[') && line.endsWith(']')) {
       try {
-        return json.decode(line)[0];
+        final Map<String, dynamic> resp = json.decode(line)[0];
+        _lastResponse = line;
+        return resp;
       } catch (e) {
         // Not valid JSON, so likely some other output that was surrounded by [brackets]
         return null;
@@ -204,9 +207,13 @@ class FlutterTestDriver {
     final Map<String, dynamic> resp = await responseFuture;
 
     if (resp['error'] != null || resp['result'] == null)
-      throw 'Unexpected error response: ${resp['error']}\n\n${_errorBuffer.toString()}';
+      _throwErrorResponse('Unexpected error response');
 
     return resp['result'];
+  }
+
+  void _throwErrorResponse(String msg) {
+    throw' $msg\n\n$_lastResponse\n\n${_errorBuffer.toString()}'.trim();
   }
 }
 
