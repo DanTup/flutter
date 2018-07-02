@@ -40,5 +40,5 @@ class BasicProject extends TestProject {
   int get buildMethodBreakpointLine => breakpointLine;
 
   String get topLevelFunctionBreakpointFile => breakpointFile;
-  int get topLevelFunctionBreakpointLine => lineContaining(breakpointFile, '// 2 BREAKPOINT');
+  int get topLevelFunctionBreakpointLine => lineContaining(main, '// 2 BREAKPOINT');
 }
