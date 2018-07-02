@@ -48,12 +48,19 @@ void main() {
 
     test('hits breakpoints after reload', () async {
       await _flutter.run(withDebugger: true);
-      
-      final VMIsolate isolate = await _flutter.breakAt(_project.breakpointFile,
-          _project.breakpointLine);
 
-      expect(isolate.pauseEvent, const isInstanceOf<VMPauseBreakpointEvent>());
-    }, skip: platform.isWindows); // https://github.com/flutter/flutter/issues/17833
+      // Due to https://github.com/flutter/flutter/issues/17833 this will
+      // throw on Windows. If you merge a fix for this and this test starts failing
+      // because it didn't throw on Windows, you should delete the wrapping expect()
+      // (dantup)
+
+      await expectLater(() async {
+        final VMIsolate isolate = await _flutter.breakAt(
+            _project.breakpointFile, _project.breakpointLine);
+
+        expect(isolate.pauseEvent, const isInstanceOf<VMPauseBreakpointEvent>());
+      }(), platform.isWindows ? throwsA(anything) : completes);
+    }); // https://github.com/flutter/flutter/issues/17833
 
     test('hits breakpoints with file:// prefixes after reload', () async {
       await _flutter.run(withDebugger: true);
@@ -61,12 +68,12 @@ void main() {
       // This test fails due to // https://github.com/flutter/flutter/issues/18441
       // If you merge a fix for this and the test starts failing because it's not
       // timing out, delete the wrapping expect below and `await` the result directly.
-      // If it still fails on Windows, that may be because of 
+      // If it still fails on Windows, that may be because of
       // https://github.com/flutter/flutter/issues/17833 (see test above)
       // in which change the expectation to:
-      // 
+      //
       //    platform.isWindows ? throwsA(anything) : completes
-      // 
+      //
       // and one the windows issue is fixed, then the expectation can be removed
       // and the breakAt call `await`ed directly.
       // (dantup)
