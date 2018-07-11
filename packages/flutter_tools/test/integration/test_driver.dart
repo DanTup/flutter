@@ -145,16 +145,19 @@ class FlutterTestDriver {
     );
   }
 
-  Future<void> addBreakpoint(String path, int line) async {
+  Future<VMIsolate> getFlutterIsolate() async {
     final VM vm = await vmService.getVM();
-    final VMIsolate isolate = await vm.isolates.first.load();
+    return await vm.isolates.first.load();
+  }
+
+  Future<void> addBreakpoint(String path, int line) async {
+    final VMIsolate isolate = await getFlutterIsolate();
     _debugPrint('Sending breakpoint for $path:$line');
     await isolate.addBreakpoint(path, line);
   }
 
   Future<VMIsolate> waitForPause() async {
-    final VM vm = await vmService.getVM();
-    final VMIsolate isolate = await vm.isolates.first.load();
+    final VMIsolate isolate = await getFlutterIsolate();
     _debugPrint('Waiting for isolate to pause');
     await _timeoutWithMessages<dynamic>(isolate.waitUntilPaused,
         message: 'Isolate did not pause');
@@ -167,8 +170,7 @@ class FlutterTestDriver {
   Future<VMIsolate> stepOut({ bool wait = true }) => _resume(step: VMStep.out, wait: wait);
 
   Future<VMIsolate> _resume({VMStep step, bool wait = true}) async {
-    final VM vm = await vmService.getVM();
-    final VMIsolate isolate = await vm.isolates.first.load();
+    final VMIsolate isolate = await getFlutterIsolate();
     _debugPrint('Sending resume ($step)');
     await _timeoutWithMessages<dynamic>(() => isolate.resume(step: step),
         message: 'Isolate did not respond to resume ($step)');
@@ -196,8 +198,7 @@ class FlutterTestDriver {
   }
 
   Future<VMFrame> getTopStackFrame() async {
-    final VM vm = await vmService.getVM();
-    final VMIsolate isolate = await vm.isolates.first.load();
+    final VMIsolate isolate = await getFlutterIsolate();
     final VMStack stack = await isolate.getStack();
     if (stack.frames.isEmpty) {
       throw new Exception('Stack is empty');
