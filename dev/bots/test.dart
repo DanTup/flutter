@@ -266,7 +266,6 @@ Future<Null> _pubRunTest(
   if (testPath != null)
     args.add(testPath);
   final Map<String, String> pubEnvironment = <String, String>{};
-  pubEnvironment['DART_VM_OPTIONS'] = '--preview-dart-2';
   if (new Directory(pubCache).existsSync()) {
     pubEnvironment['PUB_CACHE'] = pubCache;
   }
