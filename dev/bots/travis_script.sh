@@ -3,6 +3,7 @@
 set -ex
 
 export PATH="$PWD/bin:$PWD/bin/cache/dart-sdk/bin:$PATH"
+export DART_VM_OPTIONS="--preview-dart-2"
 
 if [ "$SHARD" = "build_and_deploy_gallery" ]; then
   version=$(<version)
