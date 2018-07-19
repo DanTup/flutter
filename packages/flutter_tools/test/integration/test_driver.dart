@@ -161,6 +161,7 @@ class FlutterTestDriver {
         '-d',
         'flutter-tester',
         '--start-paused',
+        '-v',
     ];
     _debugPrint('Spawning $command in ${projectDir.path}');
     
