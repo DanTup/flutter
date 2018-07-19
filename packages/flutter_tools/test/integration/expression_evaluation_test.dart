@@ -25,10 +25,20 @@ void main() {
     });
 
     tearDown(() async {
+      print('teardown!');
       try {
+      print('stopping...');
         await _flutter.stop();
+      print('project cleanup!');
         _project.cleanup();
-      } catch (e) {
+
+      print('done!');
+      } catch (e, s) {
+
+      print('failed!');
+      print(e.toString());
+
+      print(s.toString());
         // Don't fail tests if we failed to clean up temp folder.
       }
     });
@@ -59,8 +69,11 @@ void main() {
     }
 
     Future<void> evaluateComplexExpressions() async {
+      print('evaluating complex expression');
       final VMInstanceRef res = await _flutter.evaluateExpression('new DateTime.now().year');
+      print('expecting result ...');
       expect(res is VMIntInstanceRef && res.value == new DateTime.now().year, isTrue);
+      print('DONE!');
     }
 
     Future<void> evaluateComplexReturningExpressions() async {
@@ -90,7 +103,7 @@ void main() {
     test('can evaluate complex expressions in top level function', () async {
       await _flutter.run(withDebugger: true);
       await breakInTopLevelFunction(_flutter);
-      await evaluateTrivialExpressions();
+      await evaluateComplexExpressions();
     });
 
     test('can evaluate complex expressions in build method', () async {
@@ -111,5 +124,5 @@ void main() {
       await evaluateComplexReturningExpressions();
     });
   // https://github.com/flutter/flutter/issues/17833
-  }, timeout: const Timeout.factor(3), skip: platform.isWindows);
+  }, timeout: const Timeout.factor(20), skip: platform.isWindows);
 }

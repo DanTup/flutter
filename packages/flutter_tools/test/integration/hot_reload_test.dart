@@ -69,5 +69,5 @@ void main() {
       }(), platform.isLinux ? completes : throwsA(anything)
       );
     });
-  }, timeout: const Timeout.factor(3));
+  }, timeout: const Timeout.factor(20));
 }
