@@ -124,7 +124,7 @@ class FlutterTestDriver {
       _debugPrint('Closing VM service...');
       await vmService.close()
           .timeout(quitTimeout,
-              onTimeout: () => _debugPrint('VM Service did not quit within $quitTimeout'));
+              onTimeout: () { _debugPrint('VM Service did not quit within $quitTimeout'); });
               _debugPrint('Done!');
     }
     if (_currentRunningAppId != null) {
@@ -134,7 +134,7 @@ class FlutterTestDriver {
         <String, dynamic>{'appId': _currentRunningAppId}
       ).timeout(
         quitTimeout,
-        onTimeout: () => _debugPrint('app.stop did not return within $quitTimeout')
+        onTimeout: () { _debugPrint('app.stop did not return within $quitTimeout'); }
       );
       _debugPrint('Done!');
       _currentRunningAppId = null;
