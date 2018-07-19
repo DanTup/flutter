@@ -38,13 +38,18 @@ class FlutterTestDriver {
   VMServiceClient vmService;
   String get lastErrorInfo => _errorBuffer.toString();
 
+  final DateTime start = new DateTime.now();
+  void logMessage(String m) {
+    final int ms = new DateTime.now().difference(start).inMilliseconds;
+    print('[+ ${ms.toString().padLeft(5)}] $m');
+  }
   String _debugPrint(String msg) {
     const int maxLength = 500;
     final String truncatedMsg =
         msg.length > maxLength ? msg.substring(0, maxLength) + '...' : msg;
     _allMessages.add(truncatedMsg);
     if (_printJsonAndStderr) {
-      print(truncatedMsg);
+      logMessage(truncatedMsg);
     }
     return msg;
 }
