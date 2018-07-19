@@ -33,10 +33,12 @@ void main() {
         _project.cleanup();
 
       print('done!');
-      } catch (e) {
+      } catch (e, s) {
 
       print('failed!');
       print(e.toString());
+
+      print(s.toString());
         // Don't fail tests if we failed to clean up temp folder.
       }
     });
