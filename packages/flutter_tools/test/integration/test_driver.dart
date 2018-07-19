@@ -18,9 +18,9 @@ import '../src/common.dart';
 
 // Set this to true for debugging to get JSON written to stdout.
 const bool _printJsonAndStderr = true;
-const Duration defaultTimeout = const Duration(seconds: 20);
-const Duration appStartTimeout = const Duration(seconds: 60);
-const Duration quitTimeout = const Duration(seconds: 5);
+const Duration defaultTimeout = const Duration(seconds: 60);
+const Duration appStartTimeout = const Duration(seconds: 180);
+const Duration quitTimeout = const Duration(seconds: 60);
 
 class FlutterTestDriver {
   Directory _projectFolder;
