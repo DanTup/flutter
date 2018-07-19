@@ -25,10 +25,18 @@ void main() {
     });
 
     tearDown(() async {
+      print('teardown!');
       try {
+      print('stopping...');
         await _flutter.stop();
+      print('project cleanup!');
         _project.cleanup();
+
+      print('done!');
       } catch (e) {
+
+      print('failed!');
+      print(e.toString());
         // Don't fail tests if we failed to clean up temp folder.
       }
     });
@@ -59,8 +67,11 @@ void main() {
     }
 
     Future<void> evaluateComplexExpressions() async {
+      print('evaluating complex expression');
       final VMInstanceRef res = await _flutter.evaluateExpression('new DateTime.now().year');
+      print('expecting result ...');
       expect(res is VMIntInstanceRef && res.value == new DateTime.now().year, isTrue);
+      print('DONE!');
     }
 
     Future<void> evaluateComplexReturningExpressions() async {
