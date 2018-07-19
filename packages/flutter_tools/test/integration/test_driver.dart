@@ -17,7 +17,7 @@ import 'package:web_socket_channel/io.dart';
 import '../src/common.dart';
 
 // Set this to true for debugging to get JSON written to stdout.
-const bool _printJsonAndStderr = false;
+const bool _printJsonAndStderr = true;
 const Duration defaultTimeout = const Duration(seconds: 20);
 const Duration appStartTimeout = const Duration(seconds: 60);
 const Duration quitTimeout = const Duration(seconds: 5);
