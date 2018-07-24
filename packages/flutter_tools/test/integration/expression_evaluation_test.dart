@@ -25,14 +25,14 @@ void main() {
     });
 
     tearDown(() async {
-      print('teardown!');
+      // print('teardown!');
       try {
-      print('stopping...');
+      // print('stopping...');
         await _flutter.stop();
-      print('project cleanup!');
+      // print('project cleanup!');
         _project.cleanup();
 
-      print('done!');
+      // print('done!');
       } catch (e, s) {
 
       print('failed!');
