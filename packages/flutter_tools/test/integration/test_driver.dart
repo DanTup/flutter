@@ -294,14 +294,15 @@ class FlutterTestDriver {
       messages.writeln('[+ ${ms.toString().padLeft(5)}] $m');
     }
     final StreamSubscription<String> sub = _allMessages.stream.listen(logMessage);
-    final Duration logAfter = timeout ?? defaultTimeout;
-    final Duration failAfter = logAfter + const Duration(seconds: 300);
-    bool hasCompleted = false;
-    new Future<void>.delayed(logAfter).then((_) {
-      if (!hasCompleted) {
-        _debugPrint('<still going after ${logAfter.inSeconds}s!>');
-      }
-    });
+    
+    // final Duration logAfter = timeout ?? defaultTimeout;
+    // final Duration failAfter = logAfter + const Duration(seconds: 300);
+    // bool hasCompleted = false;
+    // new Future<void>.delayed(logAfter).then((_) {
+    //   if (!hasCompleted) {
+    //     _debugPrint('<still going after ${logAfter.inSeconds}s!>');
+    //   }
+    // });
     // return f().timeout(failAfter, onTimeout: () {
     //   logMessage('<timed out>');
     //   throw '$message\nReceived:\n${messages.toString()}';
