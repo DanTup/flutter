@@ -260,11 +260,11 @@ Future<Null> _runSmokeTests() async {
 Future<Null> _runToolTests() async {
   //await _runSmokeTests();
 
-  await _pubRunTest(path.join(flutterRoot, 'packages', 'flutter_tools', 'test', 'integration'));
-  await _pubRunTest(path.join(flutterRoot, 'packages', 'flutter_tools', 'test', 'integration'));
-  await _pubRunTest(path.join(flutterRoot, 'packages', 'flutter_tools', 'test', 'integration'));
-  await _pubRunTest(path.join(flutterRoot, 'packages', 'flutter_tools', 'test', 'integration'));
-  await _pubRunTest(path.join(flutterRoot, 'packages', 'flutter_tools', 'test', 'integration'));
+  await _pubRunTest(path.join(flutterRoot, 'packages', 'flutter_tools'), 'test/integration'));
+  await _pubRunTest(path.join(flutterRoot, 'packages', 'flutter_tools'), 'test/integration'));
+  await _pubRunTest(path.join(flutterRoot, 'packages', 'flutter_tools'), 'test/integration'));
+  await _pubRunTest(path.join(flutterRoot, 'packages', 'flutter_tools'), 'test/integration'));
+  await _pubRunTest(path.join(flutterRoot, 'packages', 'flutter_tools'), 'test/integration'));
 
   print('${bold}DONE: All tests successful.$reset');
 }
