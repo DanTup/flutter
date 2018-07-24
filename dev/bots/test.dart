@@ -260,16 +260,16 @@ Future<Null> _runSmokeTests() async {
 Future<Null> _runToolTests() async {
   //await _runSmokeTests();
 
-  await _pubRunTest(path.join(flutterRoot, 'packages', 'flutter_tools'), 'test/integration/expression_evaluation_test.dart');
-  await _pubRunTest(path.join(flutterRoot, 'packages', 'flutter_tools'), 'test/integration/expression_evaluation_test.dart');
-  await _pubRunTest(path.join(flutterRoot, 'packages', 'flutter_tools'), 'test/integration/expression_evaluation_test.dart');
-  await _pubRunTest(path.join(flutterRoot, 'packages', 'flutter_tools'), 'test/integration/expression_evaluation_test.dart');
-  await _pubRunTest(path.join(flutterRoot, 'packages', 'flutter_tools'), 'test/integration/expression_evaluation_test.dart');
-  await _pubRunTest(path.join(flutterRoot, 'packages', 'flutter_tools'), 'test/integration/expression_evaluation_test.dart');
-  await _pubRunTest(path.join(flutterRoot, 'packages', 'flutter_tools'), 'test/integration/expression_evaluation_test.dart');
-  await _pubRunTest(path.join(flutterRoot, 'packages', 'flutter_tools'), 'test/integration/expression_evaluation_test.dart');
-  await _pubRunTest(path.join(flutterRoot, 'packages', 'flutter_tools'), 'test/integration/expression_evaluation_test.dart');
-  await _pubRunTest(path.join(flutterRoot, 'packages', 'flutter_tools'), 'test/integration/expression_evaluation_test.dart');
+  await _pubRunTest(path.join(flutterRoot, 'packages', 'flutter_tools'), testPath: 'test/integration/expression_evaluation_test.dart');
+  await _pubRunTest(path.join(flutterRoot, 'packages', 'flutter_tools'), testPath: 'test/integration/expression_evaluation_test.dart');
+  await _pubRunTest(path.join(flutterRoot, 'packages', 'flutter_tools'), testPath: 'test/integration/expression_evaluation_test.dart');
+  await _pubRunTest(path.join(flutterRoot, 'packages', 'flutter_tools'), testPath: 'test/integration/expression_evaluation_test.dart');
+  await _pubRunTest(path.join(flutterRoot, 'packages', 'flutter_tools'), testPath: 'test/integration/expression_evaluation_test.dart');
+  await _pubRunTest(path.join(flutterRoot, 'packages', 'flutter_tools'), testPath: 'test/integration/expression_evaluation_test.dart');
+  await _pubRunTest(path.join(flutterRoot, 'packages', 'flutter_tools'), testPath: 'test/integration/expression_evaluation_test.dart');
+  await _pubRunTest(path.join(flutterRoot, 'packages', 'flutter_tools'), testPath: 'test/integration/expression_evaluation_test.dart');
+  await _pubRunTest(path.join(flutterRoot, 'packages', 'flutter_tools'), testPath: 'test/integration/expression_evaluation_test.dart');
+  await _pubRunTest(path.join(flutterRoot, 'packages', 'flutter_tools'), testPath: 'test/integration/expression_evaluation_test.dart');
 
   print('${bold}DONE: All tests successful.$reset');
 }
