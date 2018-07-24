@@ -203,18 +203,12 @@ class FlutterTestDriver {
   }
 
   Future<VMIsolate> waitForPause() async {
-    try {
     final VM vm = await vmService.getVM();
     final VMIsolate isolate = await vm.isolates.first.load();
     _debugPrint('##### Waiting for isolate to pause');
     await _timeoutWithMessages<dynamic>(isolate.waitUntilPaused,
         message: 'Isolate did not pause');
     return isolate.load();
-    } catch (e, s) {
-      print(e);
-      print(s);
-      rethrow;
-    }
   }
 
   Future<VMIsolate> resume({ bool wait = true }) => _resume(wait: wait);
