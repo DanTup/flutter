@@ -39,5 +39,5 @@ void main() {
 
       await _flutterAttach.hotReload();
     });
-  }, timeout: const Timeout.factor(3));
+  }, timeout: const Timeout.factor(3), skip: true);
 }

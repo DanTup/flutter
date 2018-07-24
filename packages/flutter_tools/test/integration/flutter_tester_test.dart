@@ -74,5 +74,5 @@ void main() {
 
       expect(await device.stopApp(null), isTrue);
     });
-  });
+  }, skip: true);
 }
