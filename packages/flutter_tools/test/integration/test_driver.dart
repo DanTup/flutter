@@ -302,10 +302,14 @@ class FlutterTestDriver {
         _debugPrint('<still going after ${logAfter.inSeconds}s!>');
       }
     });
-    return f().timeout(failAfter, onTimeout: () {
+    // return f().timeout(failAfter, onTimeout: () {
+    //   logMessage('<timed out>');
+    //   throw '$message\nReceived:\n${messages.toString()}';
+    // }).whenComplete(() { print('completed!?');  hasCompleted = true; sub.cancel(); });
+    return f().timeout(timeout ?? defaultTimeout, onTimeout: () {
       logMessage('<timed out>');
       throw '$message\nReceived:\n${messages.toString()}';
-    }).whenComplete(() { print('completed!?');  hasCompleted = true; sub.cancel(); });
+    }).whenComplete(() => sub.cancel());
   }
 
   Map<String, dynamic> _parseFlutterResponse(String line) {
