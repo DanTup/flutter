@@ -215,22 +215,8 @@ Future<Null> _runTests() async {
   await _verifyVersion(path.join(flutterRoot, 'version'));
 
   // Run tests.
-  await _runFlutterTest(path.join(flutterRoot, 'packages', 'flutter'));
-  await _runFlutterTest(path.join(flutterRoot, 'packages', 'flutter_localizations'));
-  await _runFlutterTest(path.join(flutterRoot, 'packages', 'flutter_driver'));
-  await _runFlutterTest(path.join(flutterRoot, 'packages', 'flutter_test'));
-  await _runFlutterTest(path.join(flutterRoot, 'packages', 'fuchsia_remote_debug_protocol'));
-  await _pubRunTest(path.join(flutterRoot, 'packages', 'flutter_tools'));
-  await _pubRunTest(path.join(flutterRoot, 'dev', 'bots'));
-  await _pubRunTest(path.join(flutterRoot, 'dev', 'devicelab'));
-  await _runFlutterTest(path.join(flutterRoot, 'dev', 'manual_tests'));
-  await _runFlutterTest(path.join(flutterRoot, 'dev', 'tools', 'vitool'));
-  await _runFlutterTest(path.join(flutterRoot, 'examples', 'hello_world'));
-  await _runFlutterTest(path.join(flutterRoot, 'examples', 'layers'));
-  await _runFlutterTest(path.join(flutterRoot, 'examples', 'stocks'));
-  await _runFlutterTest(path.join(flutterRoot, 'examples', 'flutter_gallery'));
-  await _runFlutterTest(path.join(flutterRoot, 'examples', 'catalog'));
-
+  await _pubRunTest(path.join(flutterRoot, 'packages', 'flutter_tools'), testPath: 'test/integration');
+  
   print('${bold}DONE: All tests successful.$reset');
 }
 
