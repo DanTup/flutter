@@ -17,9 +17,3 @@ function retry {
   }
   return 0
 }
-
-if [ -n "$TRAVIS" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
-  gem install coveralls-lcov
-  gem install bundler
-  retry 5 npm install -g firebase-tools@">=3.6.1 <3.7.0"
-fi

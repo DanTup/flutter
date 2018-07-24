@@ -6,6 +6,7 @@ import 'dart:async';
 
 import 'package:file/file.dart';
 import 'package:flutter_tools/src/base/file_system.dart';
+import 'package:flutter_tools/src/base/platform.dart';
 import 'package:test/test.dart';
 import 'package:vm_service_client/vm_service_client.dart';
 
@@ -24,10 +25,20 @@ void main() {
     });
 
     tearDown(() async {
+      print('teardown!');
       try {
+      print('stopping...');
         await _flutter.stop();
+      print('project cleanup!');
         _project.cleanup();
-      } catch (e) {
+
+      print('done!');
+      } catch (e, s) {
+
+      print('failed!');
+      print(e.toString());
+
+      print(s.toString());
         // Don't fail tests if we failed to clean up temp folder.
       }
     });
@@ -58,8 +69,11 @@ void main() {
     }
 
     Future<void> evaluateComplexExpressions() async {
+      print('evaluating complex expression');
       final VMInstanceRef res = await _flutter.evaluateExpression('new DateTime.now().year');
+      print('expecting result ...');
       expect(res is VMIntInstanceRef && res.value == new DateTime.now().year, isTrue);
+      print('DONE!');
     }
 
     Future<void> evaluateComplexReturningExpressions() async {
@@ -109,8 +123,6 @@ void main() {
       await breakInBuildMethod(_flutter);
       await evaluateComplexReturningExpressions();
     });
-    // https://github.com/flutter/flutter/issues/17833
-    // The test appears to be flaky and time out some times, skipping while
-    // investigation is ongoing: https://github.com/flutter/flutter/issues/19542
-  }, timeout: const Timeout.factor(3), skip: true);
+  // https://github.com/flutter/flutter/issues/17833
+  }, timeout: const Timeout.factor(20), skip: platform.isWindows);
 }

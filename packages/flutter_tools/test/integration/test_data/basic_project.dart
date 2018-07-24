@@ -20,7 +20,10 @@ class BasicProject extends TestProject {
   final String main = r'''
   import 'package:flutter/material.dart';
 
-  void main() => runApp(new MyApp());
+  void main() {
+    print("inside main!");
+    runApp(new MyApp());
+  }
 
   class MyApp extends StatelessWidget {
     @override
@@ -34,7 +37,7 @@ class BasicProject extends TestProject {
   }
 
   topLevelFunction() {
-    print("test");
+    print("topLevelFunction");
   }
   ''';
 

@@ -41,13 +41,18 @@ class FlutterTestDriver {
   String get lastErrorInfo => _errorBuffer.toString();
   int get vmServicePort => _vmServicePort;
 
+  final DateTime start = new DateTime.now();
+  void logMessage(String m) {
+    final int ms = new DateTime.now().difference(start).inMilliseconds;
+    print('[+ ${ms.toString().padLeft(5)}] $m');
+  }
   String _debugPrint(String msg) {
-    const int maxLength = 500;
+    const int maxLength = 600000;
     final String truncatedMsg =
         msg.length > maxLength ? msg.substring(0, maxLength) + '...' : msg;
     _allMessages.add(truncatedMsg);
     if (_printJsonAndStderr) {
-      print(truncatedMsg);
+      logMessage(truncatedMsg);
     }
     return msg;
   }
@@ -60,7 +65,7 @@ class FlutterTestDriver {
         'run',
         '--machine',
         '-d',
-        'flutter-tester',
+        'flutter-tester'
     ], withDebugger: withDebugger);
   }
 
@@ -72,6 +77,7 @@ class FlutterTestDriver {
         'flutter-tester',
         '--debug-port',
         '$port',
+        '-v',
     ], withDebugger: withDebugger);
   }
 
@@ -168,6 +174,7 @@ class FlutterTestDriver {
         quitTimeout,
         onTimeout: () { _debugPrint('app.stop did not return within $quitTimeout'); }
       );
+      _debugPrint('Done!');
       _currentRunningAppId = null;
     }
     _debugPrint('Waiting for process to end');
@@ -196,12 +203,18 @@ class FlutterTestDriver {
   }
 
   Future<VMIsolate> waitForPause() async {
+    try {
     final VM vm = await vmService.getVM();
     final VMIsolate isolate = await vm.isolates.first.load();
-    _debugPrint('Waiting for isolate to pause');
+    _debugPrint('##### Waiting for isolate to pause');
     await _timeoutWithMessages<dynamic>(isolate.waitUntilPaused,
         message: 'Isolate did not pause');
     return isolate.load();
+    } catch (e, s) {
+      print(e);
+      print(s);
+      rethrow;
+    }
   }
 
   Future<VMIsolate> resume({ bool wait = true }) => _resume(wait: wait);
@@ -212,7 +225,7 @@ class FlutterTestDriver {
   Future<VMIsolate> _resume({VMStep step, bool wait = true}) async {
     final VM vm = await vmService.getVM();
     final VMIsolate isolate = await vm.isolates.first.load();
-    _debugPrint('Sending resume ($step)');
+    _debugPrint('##### Sending resume ($step)');
     await _timeoutWithMessages<dynamic>(() => isolate.resume(step: step),
         message: 'Isolate did not respond to resume ($step)');
     return wait ? waitForPause() : null;
@@ -234,6 +247,7 @@ class FlutterTestDriver {
 
   Future<VMInstanceRef> evaluateExpression(String expression) async {
     final VMFrame topFrame = await getTopStackFrame();
+    _debugPrint('##### Evaluating expression $expression');
     return _timeoutWithMessages(() => topFrame.evaluate(expression),
         message: 'Timed out evaluating expression ($expression)');
   }
@@ -266,7 +280,8 @@ class FlutterTestDriver {
         response.complete(json);
       }
     });
-
+    
+    _debugPrint('##### Waiting for ${event != null ? '$event event.' : 'request "$id"'}');
     return _timeoutWithMessages(() => response.future,
             timeout: timeout,
             message: event != null
@@ -285,11 +300,18 @@ class FlutterTestDriver {
       messages.writeln('[+ ${ms.toString().padLeft(5)}] $m');
     }
     final StreamSubscription<String> sub = _allMessages.stream.listen(logMessage);
-
-    return f().timeout(timeout ?? defaultTimeout, onTimeout: () {
+    final Duration logAfter = timeout ?? defaultTimeout;
+    final Duration failAfter = logAfter + const Duration(seconds: 300);
+    bool hasCompleted = false;
+    new Future<void>.delayed(logAfter).then((_) {
+      if (!hasCompleted) {
+        _debugPrint('<still going after ${logAfter.inSeconds}s!>');
+      }
+    });
+    return f().timeout(failAfter, onTimeout: () {
       logMessage('<timed out>');
       throw '$message\nReceived:\n${messages.toString()}';
-    }).whenComplete(() => sub.cancel());
+    }).whenComplete(() { print('completed!?');  hasCompleted = true; sub.cancel(); });
   }
 
   Map<String, dynamic> _parseFlutterResponse(String line) {
