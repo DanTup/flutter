@@ -34,7 +34,7 @@ class BasicProject extends TestProject {
   }
 
   topLevelFunction() {
-    print("test");
+    print("topLevelFunction");
   }
   ''';
 
