@@ -287,6 +287,9 @@ class UpdatePackagesCommand extends FlutterCommand {
     for (Directory dir in packages) {
       await pubGet(context: PubContext.updatePackages, directory: dir.path, checkLastModified: false);
       count += 1;
+
+      final double seconds = timer.elapsedMilliseconds / 1000.0;
+      printStatus('\nRan \'pub\' $count time${count == 1 ? "" : "s"} in ${seconds.toStringAsFixed(1)}s.');
     }
 
     await _downloadCoverageData();
