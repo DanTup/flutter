@@ -247,8 +247,10 @@ abstract class CachedArtifact {
 
   bool isUpToDate() {
     print('up to date check..');
-    if (!location.existsSync())
+    if (!location.existsSync()) {
+      print('not up to date because ${location.path} does not exist!');
       return false;
+    }
     print('up to date check.. 1');
     if (version != cache.getStampFor(name))
       return false;
