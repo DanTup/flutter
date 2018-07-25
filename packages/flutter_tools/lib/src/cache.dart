@@ -210,8 +210,10 @@ class Cache {
       return null;
     try {
       for (CachedArtifact artifact in _artifacts) {
-        if (!artifact.isUpToDate())
+        if (!artifact.isUpToDate()) {
+          print('artifact ${artifact.name} is not up to date');
           await artifact.update();
+        }
       }
     } on SocketException catch (e) {
       if (_hostsBlockedInChina.contains(e.address?.host)) {
@@ -244,10 +246,13 @@ abstract class CachedArtifact {
   final List<File> _downloadedFiles = <File>[];
 
   bool isUpToDate() {
+    print('up to date check..');
     if (!location.existsSync())
       return false;
+    print('up to date check.. 1');
     if (version != cache.getStampFor(name))
       return false;
+    print('up to date check.. 2');
     return isUpToDateInner();
   }
 
@@ -445,20 +450,26 @@ class FlutterEngine extends CachedArtifact {
     final Directory pkgDir = cache.getCacheDir('pkg');
     for (String pkgName in _getPackageDirs()) {
       final String pkgPath = fs.path.join(pkgDir.path, pkgName);
-      if (!fs.directory(pkgPath).existsSync())
+      if (!fs.directory(pkgPath).existsSync()) {
+
+    print('not up to date because $pkgPath is missing');
         return false;
+      }
     }
 
     for (List<String> toolsDir in _getBinaryDirs()) {
       final Directory dir = fs.directory(fs.path.join(location.path, toolsDir[0]));
       if (!dir.existsSync())
+          print('not up to date because ${dir.path} is missing');
         return false;
     }
 
     for (String licenseDir in _getLicenseDirs()) {
       final File file = fs.file(fs.path.join(location.path, licenseDir, 'LICENSE'));
-      if (!file.existsSync())
+      if (!file.existsSync()) {
+        print('not up to date because ${file.path} is missing');
         return false;
+      }
     }
     return true;
   }
