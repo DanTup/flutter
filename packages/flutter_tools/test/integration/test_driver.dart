@@ -61,6 +61,7 @@ class FlutterTestDriver {
         '--machine',
         '-d',
         'flutter-tester',
+        '-v',
     ], withDebugger: withDebugger);
   }
 
@@ -72,6 +73,7 @@ class FlutterTestDriver {
         'flutter-tester',
         '--debug-port',
         '$port',
+        '-v',
     ], withDebugger: withDebugger);
   }
 
@@ -154,6 +156,7 @@ class FlutterTestDriver {
   }
 
   Future<int> stop() async {
+    _debugPrint('Stopping...');
     if (vmService != null) {
       _debugPrint('Closing VM service');
       await vmService.close()
