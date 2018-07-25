@@ -461,9 +461,10 @@ class FlutterEngine extends CachedArtifact {
 
     for (List<String> toolsDir in _getBinaryDirs()) {
       final Directory dir = fs.directory(fs.path.join(location.path, toolsDir[0]));
-      if (!dir.existsSync())
+      if (!dir.existsSync()) {
           print('not up to date because ${dir.path} is missing');
         return false;
+      }
     }
 
     for (String licenseDir in _getLicenseDirs()) {
