@@ -185,6 +185,15 @@ Future<Null> _runTests() async {
 
   // Run tests.
   await _pubRunTest(path.join(flutterRoot, 'packages', 'flutter_tools'), testPath: 'test/integration');
+  await _pubRunTest(path.join(flutterRoot, 'packages', 'flutter_tools'), testPath: 'test/integration');
+  await _pubRunTest(path.join(flutterRoot, 'packages', 'flutter_tools'), testPath: 'test/integration');
+  await _pubRunTest(path.join(flutterRoot, 'packages', 'flutter_tools'), testPath: 'test/integration');
+  await _pubRunTest(path.join(flutterRoot, 'packages', 'flutter_tools'), testPath: 'test/integration');
+  await _pubRunTest(path.join(flutterRoot, 'packages', 'flutter_tools'), testPath: 'test/integration');
+  await _pubRunTest(path.join(flutterRoot, 'packages', 'flutter_tools'), testPath: 'test/integration');
+  await _pubRunTest(path.join(flutterRoot, 'packages', 'flutter_tools'), testPath: 'test/integration');
+  await _pubRunTest(path.join(flutterRoot, 'packages', 'flutter_tools'), testPath: 'test/integration');
+  await _pubRunTest(path.join(flutterRoot, 'packages', 'flutter_tools'), testPath: 'test/integration');
   
   print('${bold}DONE: All tests successful.$reset');
 }
