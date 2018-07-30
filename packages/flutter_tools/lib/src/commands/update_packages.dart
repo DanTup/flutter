@@ -268,17 +268,18 @@ class UpdatePackagesCommand extends FlutterCommand {
     }
 
     final Stopwatch timer = new Stopwatch()..start();
-    int count = 0;
+    
+    await Future.wait(
+      packages.map((Directory dir) => pubGet(context: PubContext.updatePackages, directory: dir.path, checkLastModified: false))
+    );
 
-    for (Directory dir in packages) {
-      await pubGet(context: PubContext.updatePackages, directory: dir.path, checkLastModified: false);
-      count += 1;
-    }
+    double seconds = timer.elapsedMilliseconds / 1000.0;
+    printStatus('\nRan \'pub\' ${packages.length} time${packages.length == 1 ? "" : "s"} in ${seconds.toStringAsFixed(1)}s.');
 
     await _downloadCoverageData();
 
-    final double seconds = timer.elapsedMilliseconds / 1000.0;
-    printStatus('\nRan \'pub\' $count time${count == 1 ? "" : "s"} and fetched coverage data in ${seconds.toStringAsFixed(1)}s.');
+    seconds = timer.elapsedMilliseconds / 1000.0;
+    printStatus('\nRan \'pub\' and fetched coverage data in ${seconds.toStringAsFixed(1)}s.');
   }
 
   void showDependencyPaths({
