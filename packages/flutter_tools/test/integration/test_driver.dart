@@ -61,7 +61,6 @@ class FlutterTestDriver {
         '--machine',
         '-d',
         'flutter-tester',
-        '-v',
     ], withDebugger: withDebugger);
   }
 
@@ -73,7 +72,6 @@ class FlutterTestDriver {
         'flutter-tester',
         '--debug-port',
         '$port',
-        '-v',
     ], withDebugger: withDebugger);
   }
 
