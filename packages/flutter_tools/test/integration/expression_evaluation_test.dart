@@ -110,6 +110,6 @@ void main() {
       await breakInBuildMethod(_flutter);
       await evaluateComplexReturningExpressions();
     });
-  // https://github.com/flutter/flutter/issues/17833
+  // https://github.com/flutter/flutter/issues/17833 ..
   }, timeout: const Timeout.factor(3), skip: platform.isWindows);
 }
