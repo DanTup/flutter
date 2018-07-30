@@ -177,6 +177,37 @@ Future<Null> _runTests() async {
         printOutput: false,
         timeout: _kShortTimeout,
       ),
+      _runFlutterTest(automatedTests,
+        script: path.join('test_smoke_test', 'crash2_test.dart'),
+        expectFailure: true,
+        printOutput: false,
+        timeout: _kShortTimeout,
+      ),
+      _runFlutterTest(automatedTests,
+        script: path.join('test_smoke_test', 'syntax_error_test.broken_dart'),
+        expectFailure: true,
+        printOutput: false,
+        timeout: _kShortTimeout,
+      ),
+      _runFlutterTest(automatedTests,
+        script: path.join('test_smoke_test', 'missing_import_test.broken_dart'),
+        expectFailure: true,
+        printOutput: false,
+        timeout: _kShortTimeout,
+      ),
+      _runFlutterTest(automatedTests,
+        script: path.join('test_smoke_test', 'disallow_error_reporter_modification_test.dart'),
+        expectFailure: true,
+        printOutput: false,
+        timeout: _kShortTimeout,
+      ),
+      _runCommand(flutter,
+        <String>['drive', '--use-existing-app', '-t', path.join('test_driver', 'failure.dart')],
+        workingDirectory: path.join(flutterRoot, 'packages', 'flutter_driver'),
+        expectFailure: true,
+        printOutput: false,
+        timeout: _kShortTimeout,
+      ),
     ],
   );
 
@@ -184,12 +215,12 @@ Future<Null> _runTests() async {
   await _verifyVersion(path.join(flutterRoot, 'version'));
 
   // Run tests.
-  await _pubRunTest(path.join(flutterRoot, 'packages', 'flutter_tools'), testPath: 'test/integration');
-  await _pubRunTest(path.join(flutterRoot, 'packages', 'flutter_tools'), testPath: 'test/integration');
-  await _pubRunTest(path.join(flutterRoot, 'packages', 'flutter_tools'), testPath: 'test/integration');
-  await _pubRunTest(path.join(flutterRoot, 'packages', 'flutter_tools'), testPath: 'test/integration');
-  await _pubRunTest(path.join(flutterRoot, 'packages', 'flutter_tools'), testPath: 'test/integration');
-  await _pubRunTest(path.join(flutterRoot, 'packages', 'flutter_tools'), testPath: 'test/integration');
+  await _runFlutterTest(path.join(flutterRoot, 'packages', 'flutter'));
+  await _runFlutterTest(path.join(flutterRoot, 'packages', 'flutter_localizations'));
+  await _runFlutterTest(path.join(flutterRoot, 'packages', 'flutter_driver'));
+  await _runFlutterTest(path.join(flutterRoot, 'packages', 'flutter_test'));
+  await _runFlutterTest(path.join(flutterRoot, 'packages', 'fuchsia_remote_debug_protocol'));
+  await _pubRunTest(path.join(flutterRoot, 'packages', 'flutter_tools'));
   await _pubRunTest(path.join(flutterRoot, 'packages', 'flutter_tools'), testPath: 'test/integration');
   
   print('${bold}DONE: All tests successful.$reset');
