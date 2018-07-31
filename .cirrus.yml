@@ -7,6 +7,9 @@ task:
     PATH: "$CIRRUS_WORKING_DIR/bin:$CIRRUS_WORKING_DIR/bin/cache/dart-sdk/bin:$PATH"
 
   git_fetch_script: git fetch origin
+  pub_cache:
+    folder: ~/.pub-cache
+    fingerprint_script: find . -name 'pubspec.yaml' -exec grep -H 'PUBSPEC CHECKSUM' {} +
   setup_script: |
     echo "SDK directory is: $PWD"
     ./bin/flutter --version
