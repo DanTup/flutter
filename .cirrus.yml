@@ -8,7 +8,7 @@ task:
 
   git_fetch_script: git fetch origin
   pub_cache:
-    folder: ~/.pub-cache
+    folder: $HOME/.pub-cache
     fingerprint_script: find . -name 'pubspec.yaml' -exec grep -H 'PUBSPEC CHECKSUM' {} +
   setup_script: |
     echo "SDK directory is: $PWD"
