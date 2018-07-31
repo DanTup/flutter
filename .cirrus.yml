@@ -91,6 +91,9 @@ task:
   osx_instance:
     image: high-sierra-xcode-9.4.1
   git_fetch_script: git fetch origin
+  pub_cache:
+    folder: $HOME/.pub-cache
+    fingerprint_script: find . -name 'pubspec.yaml' -exec grep -H 'PUBSPEC CHECKSUM' {} +
   setup_script:
     - bin/flutter config --no-analytics
     - bin/flutter update-packages
@@ -105,6 +108,9 @@ task:
   osx_instance:
     image: high-sierra-xcode-9.4.1
   git_fetch_script: git fetch origin
+  pub_cache:
+    folder: $HOME/.pub-cache
+    fingerprint_script: find . -name 'pubspec.yaml' -exec grep -H 'PUBSPEC CHECKSUM' {} +
   setup_script:
     - bin/flutter config --no-analytics
     - bin/flutter update-packages
