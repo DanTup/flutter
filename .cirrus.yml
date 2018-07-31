@@ -59,6 +59,10 @@ task:
   env:
     CIRRUS_WORKING_DIR: "C:\\Windows\\Temp\\flutter sdk"
   git_fetch_script: git fetch origin
+  pub_cache:
+    folder: '%APPDATA%\PubCache'
+    fingerprint_script:
+      - ps:  Get-ChildItem pubspec.yaml -Recurse | Select-String -Pattern "PUBSPEC CHECKSUM" -SimpleMatch
   setup_script:
     - bin\flutter.bat config --no-analytics
     - bin\flutter.bat update-packages
@@ -77,6 +81,10 @@ task:
   env:
     CIRRUS_WORKING_DIR: "C:\\Windows\\Temp\\flutter sdk"
   git_fetch_script: git fetch origin
+  pub_cache:
+    folder: '%APPDATA%\PubCache'
+    fingerprint_script:
+      - ps:  Get-ChildItem pubspec.yaml -Recurse | Select-String -Pattern "PUBSPEC CHECKSUM" -SimpleMatch
   setup_script:
     - bin\flutter.bat config --no-analytics
     - bin\flutter.bat update-packages
