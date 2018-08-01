@@ -10,6 +10,8 @@ task:
   pub_cache:
     folder: $HOME/.pub-cache
     fingerprint_script: find . -name 'pubspec.yaml' -exec grep -H 'PUBSPEC CHECKSUM' {} +
+  flutter_cache:
+    folder: bin/cache
   setup_script: |
     echo "SDK directory is: $PWD"
     ./bin/flutter --version
@@ -63,6 +65,8 @@ task:
     folder: $APPDATA\Pub\Cache
     fingerprint_script:
       - ps:  Get-ChildItem pubspec.yaml -Recurse | Select-String -Pattern "PUBSPEC CHECKSUM" -SimpleMatch
+  flutter_cache:
+    folder: bin\cache
   setup_script:
     - bin\flutter.bat config --no-analytics
     - bin\flutter.bat update-packages
@@ -85,6 +89,8 @@ task:
     folder: $APPDATA\Pub\Cache
     fingerprint_script:
       - ps:  Get-ChildItem pubspec.yaml -Recurse | Select-String -Pattern "PUBSPEC CHECKSUM" -SimpleMatch
+  flutter_cache:
+    folder: bin\cache
   setup_script:
     - bin\flutter.bat config --no-analytics
     - bin\flutter.bat update-packages
@@ -102,6 +108,8 @@ task:
   pub_cache:
     folder: $HOME/.pub-cache
     fingerprint_script: find . -name 'pubspec.yaml' -exec grep -H 'PUBSPEC CHECKSUM' {} +
+  flutter_cache:
+    folder: bin/cache
   setup_script:
     - bin/flutter config --no-analytics
     - bin/flutter update-packages
@@ -119,6 +127,8 @@ task:
   pub_cache:
     folder: $HOME/.pub-cache
     fingerprint_script: find . -name 'pubspec.yaml' -exec grep -H 'PUBSPEC CHECKSUM' {} +
+  flutter_cache:
+    folder: bin/cache
   setup_script:
     - bin/flutter config --no-analytics
     - bin/flutter update-packages
