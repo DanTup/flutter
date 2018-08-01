@@ -17,7 +17,7 @@ import 'package:web_socket_channel/io.dart';
 import '../src/common.dart';
 
 // Set this to true for debugging to get JSON written to stdout.
-const bool _printJsonAndStderr = false;
+const bool _printJsonAndStderr = true;
 const Duration defaultTimeout = const Duration(seconds: 20);
 const Duration appStartTimeout = const Duration(seconds: 60);
 const Duration quitTimeout = const Duration(seconds: 5);
@@ -43,18 +43,21 @@ class FlutterTestDriver {
   int get vmServicePort => _vmServicePort;
   bool get hasExited => _hasExited;
 
+  final DateTime start = new DateTime.now();
   String _debugPrint(String msg) {
     const int maxLength = 500;
     final String truncatedMsg =
         msg.length > maxLength ? msg.substring(0, maxLength) + '...' : msg;
     _allMessages.add(truncatedMsg);
     if (_printJsonAndStderr) {
-      print(truncatedMsg);
+      final int ms = new DateTime.now().difference(start).inMilliseconds;
+      print('[+ ${ms.toString().padLeft(5)}] $msg');
     }
     return msg;
   }
 
   Future<void> run({bool withDebugger = false, bool pauseOnExceptions = false}) async {
+    _debugPrint('Setting up process for run');
     await _setupProcess(<String>[
         'run',
         '--machine',
@@ -64,6 +67,7 @@ class FlutterTestDriver {
   }
 
   Future<void> attach(int port, {bool withDebugger = false, bool pauseOnExceptions = false}) async {
+    _debugPrint('Setting up process for attach');
     await _setupProcess(<String>[
         'attach',
         '--machine',
