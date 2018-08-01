@@ -94,7 +94,7 @@ Future<Null> pubGet({
       'Running "flutter packages $command" in ${fs.path.basename(directory)}...',
       expectSlowOperation: true,
     );
-    final List<String> args = <String>['--verbosity=warning'];
+    final List<String> args = <String>['--verbosity=all'];
     if (FlutterCommand.current != null && FlutterCommand.current.globalResults['verbose'])
       args.add('--verbose');
     args.addAll(<String>[command, '--no-precompile']);
