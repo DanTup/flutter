@@ -62,7 +62,7 @@ task:
   pub_cache:
     folder: $APPDATA\Pub\Cache
     fingerprint_script:
-      - ps:  Get-ChildItem pubspec.yaml -Recurse | Select-String -SimpleMatch -Pattern "PUBSPEC CHECKSUM"
+      - ps:  Get-ChildItem pubspec.yaml -Recurse | Select-String -Pattern "PUBSPEC CHECKSUM" -SimpleMatch
   setup_script:
     - bin\flutter.bat config --no-analytics
     - bin\flutter.bat update-packages
@@ -84,7 +84,7 @@ task:
   pub_cache:
     folder: $APPDATA\Pub\Cache
     fingerprint_script:
-      - ps:  Get-ChildItem pubspec.yaml -Recurse | Select-String -SimpleMatch -Pattern "PUBSPEC CHECKSUM"
+      - ps:  Get-ChildItem pubspec.yaml -Recurse | Select-String -Pattern "PUBSPEC CHECKSUM" -SimpleMatch
   setup_script:
     - bin\flutter.bat config --no-analytics
     - bin\flutter.bat update-packages
