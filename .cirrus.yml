@@ -7,7 +7,7 @@ task:
     PATH: "$CIRRUS_WORKING_DIR/bin:$CIRRUS_WORKING_DIR/bin/cache/dart-sdk/bin:$PATH"
 
   git_fetch_script: git fetch origin
-  pub_cache:
+  pub_cache: &pub_cache_linux_mac
     folder: $HOME/.pub-cache
     fingerprint_script: find . -name 'pubspec.yaml' -exec grep -H 'PUBSPEC CHECKSUM' {} +
   setup_script: |
@@ -59,7 +59,7 @@ task:
   env:
     CIRRUS_WORKING_DIR: "C:\\Windows\\Temp\\flutter sdk"
   git_fetch_script: git fetch origin
-  pub_cache:
+  pub_cache: &pub_cache_win
     folder: $APPDATA\Pub\Cache
     fingerprint_script:
       - ps:  Get-ChildItem pubspec.yaml -Recurse | Select-String -Pattern "PUBSPEC CHECKSUM" -SimpleMatch
@@ -81,10 +81,7 @@ task:
   env:
     CIRRUS_WORKING_DIR: "C:\\Windows\\Temp\\flutter sdk"
   git_fetch_script: git fetch origin
-  pub_cache:
-    folder: $APPDATA\Pub\Cache
-    fingerprint_script:
-      - ps:  Get-ChildItem pubspec.yaml -Recurse | Select-String -Pattern "PUBSPEC CHECKSUM" -SimpleMatch
+  pub_cache: *pub_cache_win
   setup_script:
     - bin\flutter.bat config --no-analytics
     - bin\flutter.bat update-packages
@@ -99,9 +96,7 @@ task:
   osx_instance:
     image: high-sierra-xcode-9.4.1
   git_fetch_script: git fetch origin
-  pub_cache:
-    folder: $HOME/.pub-cache
-    fingerprint_script: find . -name 'pubspec.yaml' -exec grep -H 'PUBSPEC CHECKSUM' {} +
+  pub_cache: *pub_cache_linux_mac
   setup_script:
     - bin/flutter config --no-analytics
     - bin/flutter update-packages
@@ -116,9 +111,7 @@ task:
   osx_instance:
     image: high-sierra-xcode-9.4.1
   git_fetch_script: git fetch origin
-  pub_cache:
-    folder: $HOME/.pub-cache
-    fingerprint_script: find . -name 'pubspec.yaml' -exec grep -H 'PUBSPEC CHECKSUM' {} +
+  pub_cache: *pub_cache_linux_mac
   setup_script:
     - bin/flutter config --no-analytics
     - bin/flutter update-packages
