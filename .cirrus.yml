@@ -29,8 +29,9 @@ task:
         memory: 8G
 
 task:
+  name: tool_tests-windows
   env:
-    SHARD: tests
+    SHARD: tool_tests
   windows_container:
     image: cirrusci/windowsservercore:2016
     os_version: 2016
@@ -44,7 +45,3 @@ task:
     - git fetch origin master
   test_all_script:
     - bin\cache\dart-sdk\bin\dart.exe -c dev\bots\test.dart
-  matrix:
-    - name: tool_tests-windows
-      env:
-        SHARD: tool_tests
