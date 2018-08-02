@@ -17,14 +17,6 @@ task:
     fingerprint_script: grep -r --include=pubspec.yaml 'PUBSPEC CHECKSUM' "$CIRRUS_WORKING_DIR"
 
   git_fetch_script: git fetch origin
-  pub_upgrade_script: |
-    cd packages/flutter_tools
-    pub upgrade --verbosity=all --no-packages-dir
-    cd "$CIRRUS_WORKING_DIR"
-  generate_snapshot_script: |
-    cd packages/flutter_tools
-    dart --snapshot="$CIRRUS_WORKING_DIR/bin/cache/flutter_tools.snapshot" --packages=".packages" "bin/flutter_tools.dart"
-    cd "$CIRRUS_WORKING_DIR"
   flutter_version_script: ./bin/flutter --version
   flutter_disable_analytics_script: ./bin/flutter config --no-analytics
   flutter_update_packages_script: ./bin/flutter update-packages
@@ -48,15 +40,10 @@ task:
       - ps:  Get-ChildItem -Path "$Env:CIRRUS_WORKING_DIR" pubspec.yaml -Recurse | Select-String -Pattern "PUBSPEC CHECKSUM" -SimpleMatch
 
   git_fetch_script: git fetch origin
-  pub_upgrade_script: |
-    cd packages\flutter_tools
-    pub upgrade --verbosity=all --no-packages-dir
-    cd $Env:CIRRUS_WORKING_DIR
-  generate_snapshot_script: |
-    cd packages\flutter_tools
-    dart --snapshot="$Env:CIRRUS_WORKING_DIR\\bin\\cache\\flutter_tools.snapshot" --packages=".packages" "bin\\flutter_tools.dart"
-    cd $Env:CIRRUS_WORKING_DIR
   flutter_version_script: bin\flutter.bat --version
-  flutter_disable_analytics_script: bin\flutter.bat config --no-analytics
+  flutter_disable_analytics_script:
+    - ps: |
+      filter timestamp {"$(Get-Date -Format o): $_"}
+      bin\flutter.bat config --no-analytics | timestamp
   flutter_update_packages_script: bin\flutter.bat update-packages
   fetch_fetch_master_script: git fetch origin master
