@@ -33,17 +33,14 @@ task:
     CIRRUS_WORKING_DIR: "C:\\Windows\\Temp\\flutter sdk"
     PATH: "$CIRRUS_WORKING_DIR\\bin;$CIRRUS_WORKING_DIR\\bin\\cache\\dart-sdk\\bin;$PATH"
     PUB_ENVIRONMENT: "flutter_bot:flutter_install"
+    CIRRUS_SHELL: powershell
     
   pub_cache:
     folder: $APPDATA\Pub\Cache
-    fingerprint_script:
-      - ps:  Get-ChildItem -Path "$Env:CIRRUS_WORKING_DIR" pubspec.yaml -Recurse | Select-String -Pattern "PUBSPEC CHECKSUM" -SimpleMatch
+    fingerprint_script: Get-ChildItem -Path "$Env:CIRRUS_WORKING_DIR" pubspec.yaml -Recurse | Select-String -Pattern "PUBSPEC CHECKSUM" -SimpleMatch
 
   git_fetch_script: git fetch origin
   flutter_version_script: bin\flutter.bat --version
-  flutter_disable_analytics_script:
-    - ps: |
-        filter timestamp {"[$(Get-Date -Format o)] $_"}
-        bin\flutter.bat config --no-analytics | timestamp
+  flutter_disable_analytics_script: bin\flutter.bat config --no-analytics | % { "[$(Get-Date -Format o)] $_" }
   flutter_update_packages_script: bin\flutter.bat update-packages
   fetch_fetch_master_script: git fetch origin master
