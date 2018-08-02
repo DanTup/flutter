@@ -39,8 +39,8 @@ task:
     folder: $APPDATA\Pub\Cache
     fingerprint_script: Get-ChildItem -Path "$Env:CIRRUS_WORKING_DIR" pubspec.yaml -Recurse | Select-String -Pattern "PUBSPEC CHECKSUM" -SimpleMatch
 
-  git_fetch_script: git fetch origin
-  flutter_version_script: bin\flutter.bat --version
+  git_fetch_script: git fetch origin | % { "[$(Get-Date -Format o)] $_" }
+  flutter_version_script: bin\flutter.bat --version | % { "[$(Get-Date -Format o)] $_" }
   flutter_disable_analytics_script: bin\flutter.bat config --no-analytics | % { "[$(Get-Date -Format o)] $_" }
-  flutter_update_packages_script: bin\flutter.bat update-packages
-  fetch_fetch_master_script: git fetch origin master
+  flutter_update_packages_script: bin\flutter.bat update-packages | % { "[$(Get-Date -Format o)] $_" }
+  fetch_fetch_master_script: git fetch origin master | % { "[$(Get-Date -Format o)] $_" }
