@@ -43,7 +43,7 @@ task:
   flutter_version_script: bin\flutter.bat --version
   flutter_disable_analytics_script:
     - ps: |
-      filter timestamp {"$(Get-Date -Format o): $_"}
+      filter timestamp {"$$(Get-Date -Format o): $$_"}
       bin\flutter.bat config --no-analytics | timestamp
   flutter_update_packages_script: bin\flutter.bat update-packages
   fetch_fetch_master_script: git fetch origin master
