@@ -11,6 +11,10 @@ task:
     CIRRUS_WORKING_DIR: "/tmp/flutter sdk"
     PATH: "$CIRRUS_WORKING_DIR/bin:$CIRRUS_WORKING_DIR/bin/cache/dart-sdk/bin:$PATH"
 
+  pub_cache:
+    folder: $HOME/.pub-cache
+    fingerprint_script: grep -r --include=pubspec.yaml 'PUBSPEC CHECKSUM' "$CIRRUS_WORKING_DIR"
+
   git_fetch_script: git fetch origin
   flutter_version_script: ./bin/flutter --version
   flutter_disable_analytics_script: ./bin/flutter config --no-analytics
@@ -27,6 +31,11 @@ task:
     SHARD: tool_tests
     CIRRUS_WORKING_DIR: "C:\\Windows\\Temp\\flutter sdk"
     
+  pub_cache:
+    folder: $APPDATA\Pub\Cache
+    fingerprint_script:
+      - ps:  Get-ChildItem -Path "$Env:CIRRUS_WORKING_DIR" pubspec.yaml -Recurse | Select-String -Pattern "PUBSPEC CHECKSUM" -SimpleMatch
+
   git_fetch_script: git fetch origin
   flutter_version_script: bin\flutter.bat --version
   flutter_disable_analytics_script: bin\flutter.bat config --no-analytics
