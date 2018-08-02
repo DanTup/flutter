@@ -21,7 +21,7 @@ task:
     cd packages/flutter_tools
     pub upgrade --verbosity=all --no-packages-dir
     cd "$CIRRUS_WORKING_DIR"
-  pub_upgrade_script: |
+  generate_snapshot_script: |
     cd packages/flutter_tools
     dart --snapshot="$CIRRUS_WORKING_DIR/bin/cache/flutter_tools.snapshot" --packages=".packages" "bin/flutter_tools.dart"
     cd "$CIRRUS_WORKING_DIR"
