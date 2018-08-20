@@ -6,6 +6,7 @@ import 'dart:async';
 
 import 'package:file/file.dart';
 import 'package:flutter_tools/src/base/file_system.dart';
+import 'package:flutter_tools/src/base/platform.dart';
 
 import 'package:vm_service_client/vm_service_client.dart';
 
@@ -108,7 +109,5 @@ void main() {
       await evaluateComplexReturningExpressions();
     });
     // https://github.com/flutter/flutter/issues/17833
-    // The test appears to be flaky and time out some times, skipping while
-    // investigation is ongoing: https://github.com/flutter/flutter/issues/19542
-  }, timeout: const Timeout.factor(3), skip: true);
+  }, timeout: const Timeout.factor(3), skip: platform.isWindows);
 }
