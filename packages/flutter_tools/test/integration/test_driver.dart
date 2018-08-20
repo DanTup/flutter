@@ -58,7 +58,6 @@ final DateTime start = new DateTime.now();
 
   Future<void> run({bool withDebugger = false, bool pauseOnExceptions = false}) async {
     await _setupProcess(<String>[
-        '--enable-asserts',
         'run',
         '--machine',
         '-d',
@@ -69,7 +68,6 @@ final DateTime start = new DateTime.now();
 
   Future<void> attach(int port, {bool withDebugger = false, bool pauseOnExceptions = false}) async {
     await _setupProcess(<String>[
-        '--enable-asserts',
         'attach',
         '--machine',
         '-d',
@@ -90,7 +88,7 @@ final DateTime start = new DateTime.now();
             .followedBy(withDebugger ? <String>['--start-paused'] : <String>[])
             .toList(),
         workingDirectory: _projectFolder.path,
-        environment: <String, String>{'FLUTTER_TEST': 'true'});
+        environment: <String, String>{'FLUTTER_TEST': 'true', 'FLUTTER_TOOL_ARGS': '--enable-asserts'});
 
     _proc.exitCode.then((int code) {
       _debugPrint('Process exited ($code)');
