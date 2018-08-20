@@ -43,13 +43,15 @@ class FlutterTestDriver {
   int get vmServicePort => _vmServicePort;
   bool get hasExited => _hasExited;
 
+final DateTime start = new DateTime.now();
   String _debugPrint(String msg) {
+    final int ms = new DateTime.now().difference(start).inMilliseconds;
     const int maxLength = 500;
     final String truncatedMsg =
         msg.length > maxLength ? msg.substring(0, maxLength) + '...' : msg;
     _allMessages.add(truncatedMsg);
     if (_printJsonAndStderr) {
-      print(truncatedMsg);
+      print('[+ ${ms.toString().padLeft(5)}]    $truncatedMsg');
     }
     return msg;
   }
