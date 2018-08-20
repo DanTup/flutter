@@ -58,6 +58,7 @@ final DateTime start = new DateTime.now();
 
   Future<void> run({bool withDebugger = false, bool pauseOnExceptions = false}) async {
     await _setupProcess(<String>[
+        '--enable-asserts',
         'run',
         '--machine',
         '-d',
@@ -68,6 +69,7 @@ final DateTime start = new DateTime.now();
 
   Future<void> attach(int port, {bool withDebugger = false, bool pauseOnExceptions = false}) async {
     await _setupProcess(<String>[
+        '--enable-asserts',
         'attach',
         '--machine',
         '-d',
