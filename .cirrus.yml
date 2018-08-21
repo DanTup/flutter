@@ -8,6 +8,7 @@ task:
     CIRRUS_WORKING_DIR: "/tmp/flutter sdk"
     PATH: "$CIRRUS_WORKING_DIR/bin:$CIRRUS_WORKING_DIR/bin/cache/dart-sdk/bin:$PATH"
     ANDROID_HOME: "/opt/android_sdk"
+    FLUTTER_TOOL_ARGS: --enable-asserts
   git_fetch_script:
     - git fetch origin
     - git fetch origin master # To set FETCH_HEAD for "git merge-base" to work
