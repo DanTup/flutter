@@ -109,5 +109,5 @@ void main() {
       await evaluateComplexReturningExpressions();
     });
     // https://github.com/flutter/flutter/issues/17833
-  }, timeout: const Timeout.factor(3), skip: platform.isWindows);
+  }, timeout: const Timeout.factor(6), skip: platform.isWindows);
 }
