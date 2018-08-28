@@ -352,7 +352,7 @@ Future<Null> _pubRunTest(
   String testPath,
   bool enableFlutterToolAsserts = false
 }) {
-  final List<String> args = <String>['run', 'test', '-j1', '-rcompact'];
+  final List<String> args = <String>['run', 'test', '-rcompact'];
   if (!hasColor)
     args.add('--no-color');
   if (testPath != null)
