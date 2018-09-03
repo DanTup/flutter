@@ -117,6 +117,8 @@ class FlutterTesterDevice extends Device {
       '--non-interactive',
       '--enable-dart-profiling',
       '--packages=${PackageMap.globalPackagesPath}',
+      '--verbose-logging',
+      '--trace-startup',
     ];
     if (debuggingOptions.debuggingEnabled) {
       if (debuggingOptions.startPaused)
@@ -158,12 +160,14 @@ class FlutterTesterDevice extends Device {
           .transform(utf8.decoder)
           .transform(const LineSplitter())
           .listen((String line) {
+        printTrace(line);
         _logReader.addLine(line);
       });
       _process.stderr
           .transform(utf8.decoder)
           .transform(const LineSplitter())
           .listen((String line) {
+        printTrace(line);
         _logReader.addLine(line);
       });
 
