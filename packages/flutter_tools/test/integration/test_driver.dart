@@ -60,6 +60,7 @@ class FlutterTestDriver {
         '--machine',
         '-d',
         'flutter-tester',
+        '-v',
     ], withDebugger: withDebugger, pauseOnExceptions: pauseOnExceptions);
   }
 
