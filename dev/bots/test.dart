@@ -145,6 +145,7 @@ Future<Null> _runToolTests() async {
     path.join(flutterRoot, 'packages', 'flutter_tools'),
     enableFlutterToolAsserts: true,
     runConcurrently: false,
+    testPath: 'test/integration',
   );
 
   print('${bold}DONE: All tests successful.$reset');
