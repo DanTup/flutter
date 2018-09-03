@@ -71,6 +71,7 @@ class FlutterTestDriver {
         'flutter-tester',
         '--debug-port',
         '$port',
+        '-v',
     ], withDebugger: withDebugger, pauseOnExceptions: pauseOnExceptions);
   }
 
