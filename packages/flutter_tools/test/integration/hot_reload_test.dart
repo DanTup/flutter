@@ -27,23 +27,24 @@ void main() {
       tryToDelete(tempDir);
     });
 
-    test('reload works without error', () async {
-      await _flutter.run();
-      await _flutter.hotReload();
-    });
+    // test('reload works without error', () async {
+    //   await _flutter.run();
+    //   await _flutter.hotReload();
+    // });
 
-    test('restart works without error', () async {
-      await _flutter.run();
-      await _flutter.hotRestart();
-    });
+    // test('restart works without error', () async {
+    //   await _flutter.run();
+    //   await _flutter.hotRestart();
+    // });
 
     test('reload hits breakpoints with file:// prefixes after reload', () async {
       await _flutter.run(withDebugger: true);
 
       // Hit breakpoint using a file:// URI.
       final VMIsolate isolate = await _flutter.breakAt(
-          Uri.file(_project.breakpointFile).toString(),
-          _project.breakpointLine);
+        Uri.file(_project.breakpointFile).toString(),
+        _project.breakpointLine,
+      );
       expect(isolate.pauseEvent, isInstanceOf<VMPauseBreakpointEvent>());
     });
   }, timeout: const Timeout.factor(6));
