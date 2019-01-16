@@ -144,7 +144,7 @@ Future<void> _runToolTests() async {
 
   await _pubRunTest(
     path.join(flutterRoot, 'packages', 'flutter_tools'),
-    testPath: 'test/integration')
+    testPath: 'test/integration',
     enableFlutterToolAsserts: true,
   );
 
