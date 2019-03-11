@@ -36,7 +36,7 @@ if (-not (Test-Path $engineStamp)) {
     echo "$engineStamp was missing"
 }
 
-if ($engineVersion -neq (Get-Content $engineStamp))) {
+if ($engineVersion -ne (Get-Content $engineStamp)) {
     echo "engine version: $engineVersion"
     echo "engine stamp: "
 	echo (Get-Content $engineStamp)
