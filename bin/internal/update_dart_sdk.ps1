@@ -35,8 +35,7 @@ if ($psMajorVersionLocal -lt $psMajorVersionRequired) {
 if (-not (Test-Path $engineStamp)) {
     echo "$engineStamp was missing"
 }
-
-if ($engineVersion -ne (Get-Content $engineStamp)) {
+elseif ($engineVersion -ne (Get-Content $engineStamp)) {
     echo "engine version: $engineVersion"
     echo "engine stamp: "
 	echo (Get-Content $engineStamp)
