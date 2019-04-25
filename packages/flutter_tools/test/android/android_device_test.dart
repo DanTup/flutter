@@ -157,6 +157,41 @@ Use the 'android' tool to install them:
       ProcessManager: () => mockProcessManager,
     });
   });
+
+  group('portForwarder', () {
+    final ProcessManager mockProcessManager = MockProcessManager();
+
+    setUp(() {
+      final File adbExe = fs.file(getAdbPath(androidSdk));
+      when(mockProcessManager.runSync(
+        <String>[any, 'forward', 'tcp:0', 'tcp:123'],
+      ))
+      .thenAnswer(
+        (_) => ProcessResult(0, 0, '456', ''),
+      );
+    });
+
+    testUsingContext('returns a generated port when not specified', () async {
+      const String deviceId = '1234';
+      final AndroidDevice device = AndroidDevice(deviceId);
+      final int hostPort = await device.portForwarder.forward(123);
+      expect(hostPort, isNotNull);
+      expect(hostPort, greaterThan(0));
+      // Ensure we didn't just get back the device port.
+      expect(hostPort, isNot(equals(123)));
+    }, overrides: <Type, Generator>{
+      ProcessManager: () => mockProcessManager,
+    });
+
+    testUsingContext('returns the supplied port when specified', () async {
+      const String deviceId = '1234';
+      final AndroidDevice device = AndroidDevice(deviceId);
+      final int hostPort = await device.portForwarder.forward(123, hostPort: 456);
+      expect(hostPort, equals(456));
+    }, overrides: <Type, Generator>{
+      ProcessManager: () => mockProcessManager,
+    });
+  });
 }
 
 class MockProcessManager extends Mock implements ProcessManager {}
