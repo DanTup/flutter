@@ -98,9 +98,13 @@ Future<void> pubGet({
     );
     final bool verbose = FlutterCommand.current != null && FlutterCommand.current.globalResults['verbose'];
     final List<String> args = <String>[
-      if (verbose) '--verbose' else '--verbosity=warning',
+      if (verbose)
+        '--verbose'
+      else
+        '--verbosity=warning',
       ...<String>[command, '--no-precompile'],
-      if (offline) '--offline',
+      if (offline)
+        '--offline',
     ];
     try {
       await pub(
@@ -119,10 +123,11 @@ Future<void> pubGet({
   }
 
   if (!dotPackages.existsSync())
-    throwToolExit('$directory: pub did not create .packages file');
+    throwToolExit('$directory: pub did not create .packages file.');
 
-  if (dotPackages.lastModifiedSync().isBefore(pubSpecYaml.lastModifiedSync()))
-    throwToolExit('$directory: pub did not update .packages file (pubspec.yaml file has a newer timestamp)');
+  if (dotPackages.lastModifiedSync().isBefore(pubSpecYaml.lastModifiedSync())) {
+    throwToolExit('$directory: pub did not update .packages file (pubspec.yaml timestamp: ${pubSpecYaml.lastModifiedSync()}; .packages timestamp: ${dotPackages.lastModifiedSync()}).');
+  }
 }
 
 typedef MessageFilter = String Function(String message);
