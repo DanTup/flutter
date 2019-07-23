@@ -26,7 +26,7 @@ import '../src/common.dart';
 //   Messages regarding what the test is doing.
 // If this is false, then only critical errors and logs when things appear to be
 // taking a long time are printed to the console.
-const bool _printDebugOutputToStdOut = false;
+const bool _printDebugOutputToStdOut = true;
 
 final DateTime startTime = DateTime.now();
 
@@ -84,8 +84,8 @@ abstract class FlutterTestDriver {
     final String flutterBin = fs.path.join(getFlutterRoot(), 'bin', 'flutter');
     if (withDebugger)
       arguments.add('--start-paused');
-    if (_printDebugOutputToStdOut)
-      arguments.add('--verbose');
+    // if (_printDebugOutputToStdOut)
+    //   arguments.add('--verbose');
     if (pidFile != null) {
       arguments.addAll(<String>['--pid-file', pidFile.path]);
     }
