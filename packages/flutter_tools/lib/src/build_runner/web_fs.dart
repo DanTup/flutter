@@ -95,7 +95,7 @@ class WebFs {
     await _client.close();
     await _dwds.stop();
     await _server.close(force: true);
-    await _chrome.close();
+    await _chrome?.close();
   }
 
   /// Retrieve the [DebugConnection] for the current application.
@@ -107,6 +107,9 @@ class WebFs {
 
   /// Perform a hard refresh of all connected browser tabs.
   Future<void> hardRefresh() async {
+    if (_chrome == null) {
+      return;
+    }
     final List<ChromeTab> tabs = await _chrome.chromeConnection.getTabs();
     for (ChromeTab tab in tabs) {
       if (!tab.url.contains('localhost')) {
@@ -169,6 +172,7 @@ class WebFs {
       applicationTarget: kBuildTargetName,
       assetServerPort: daemonAssetPort,
       buildResults: filteredBuildResults,
+      // TODO(dantup): What to do here when we're not launching a browser?
       chromeConnection: () async {
         return (await ChromeLauncher.connectedInstance).chromeConnection;
       },
@@ -217,7 +221,7 @@ class WebFs {
     cascade = cascade.add(_assetHandler(flutterProject));
     final HttpServer server = await httpMultiServerFactory(_kHostName, port);
     shelf_io.serveRequests(server, cascade.handler);
-    final Chrome chrome = await chromeLauncher.launch('http://$_kHostName:$port/');
+    final Chrome chrome = buildInfo.launchBrowser ? await chromeLauncher.launch('http://$_kHostName:$port/') : null;
     return WebFs(
       client,
       server,

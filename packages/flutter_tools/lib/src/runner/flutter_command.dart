@@ -143,6 +143,13 @@ abstract class FlutterCommand extends Command<void> {
     _usesTargetOption = true;
   }
 
+  void usesLaunchBrowserOption() {
+    argParser.addFlag('launch-browser',
+      defaultsTo: true,
+      help: 'Whether to launch the application in a browser when targetting a'
+            'web platform.\n');
+  }
+
   String get targetFile {
     if (argResults.wasParsed('target'))
       return argResults['target'];
@@ -327,6 +334,10 @@ abstract class FlutterCommand extends Command<void> {
         ? argResults['build-number']
         : null;
 
+    final bool launchBrowser = argParser.options.containsKey('launch-browser')
+        ? argResults['launch-browser']
+        : true;
+
     String extraFrontEndOptions =
         argParser.options.containsKey(FlutterOptions.kExtraFrontEndOptions)
             ? argResults[FlutterOptions.kExtraFrontEndOptions]
@@ -347,6 +358,7 @@ abstract class FlutterCommand extends Command<void> {
       argParser.options.containsKey('flavor')
         ? argResults['flavor']
         : null,
+      launchBrowser: launchBrowser,
       trackWidgetCreation: trackWidgetCreation,
       extraFrontEndOptions: extraFrontEndOptions,
       extraGenSnapshotOptions: argParser.options.containsKey(FlutterOptions.kExtraGenSnapshotOptions)

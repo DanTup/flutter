@@ -45,6 +45,7 @@ abstract class RunCommandBase extends FlutterCommand with DeviceBasedDevelopment
         help: 'Which route to load when running the app.',
       );
     usesTargetOption();
+    usesLaunchBrowserOption();
     usesPortOptions();
     usesIpv6Flag();
     usesPubOption();

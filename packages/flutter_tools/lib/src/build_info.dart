@@ -13,6 +13,7 @@ class BuildInfo {
   const BuildInfo(
     this.mode,
     this.flavor, {
+    this.launchBrowser = true,
     this.trackWidgetCreation = false,
     this.extraFrontEndOptions,
     this.extraGenSnapshotOptions,
@@ -37,6 +38,9 @@ class BuildInfo {
 
   /// Whether the build should track widget creation locations.
   final bool trackWidgetCreation;
+
+  /// Whether to launch the browser for Web projects.
+  final bool launchBrowser;
 
   /// Extra command-line options for front-end.
   final String extraFrontEndOptions;
