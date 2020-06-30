@@ -345,6 +345,85 @@ void main() {
       );
     });
   });
+
+  group('daemon queue', () {
+    DebounceOperationQueue<int, String> queue;
+    const Duration debounceDuration = Duration(seconds: 1);
+
+    setUp(() {
+      queue = DebounceOperationQueue<int, String>();
+    });
+
+    testUsingContext('debounces/merges same operation type and returns same result', () async {
+      // FakeAsync().run((FakeAsync async) async {
+        final List<Future<int>> operations = <Future<int>>[
+          queue.queueAndDebounce('OP1', debounceDuration, () async => 1),
+          queue.queueAndDebounce('OP1', debounceDuration, () async => 2),
+        ];
+
+        // async.elapse(debounceDuration * 5);
+        final List<int> results = await Future.wait(operations);
+
+        expect(results, orderedEquals(<int>[1, 1]));
+      // });
+    });
+
+    testUsingContext('does not merge results outside of the debounce duration', () async {
+      // FakeAsync().run((FakeAsync async) async {
+        final List<Future<int>> operations = <Future<int>>[
+          queue.queueAndDebounce('OP1', debounceDuration, () async => 1),
+          Future<int>.delayed(debounceDuration * 2)
+              .then((_) => queue.queueAndDebounce('OP1', debounceDuration, () async => 2)),
+        ];
+
+        // async.elapse(debounceDuration * 5);
+        final List<int> results = await Future.wait(operations);
+
+        expect(results, orderedEquals(<int>[1, 2]));
+      // });
+    });
+
+    testUsingContext('does not merge results of different operations', () async {
+      // FakeAsync().run((FakeAsync async) async {
+        final List<Future<int>> operations = <Future<int>>[
+          queue.queueAndDebounce('OP1', debounceDuration, () async => 1),
+          queue.queueAndDebounce('OP2', debounceDuration, () async => 2),
+        ];
+
+        // async.elapse(debounceDuration * 5);
+        final List<int> results = await Future.wait(operations);
+
+        expect(results, orderedEquals(<int>[1, 2]));
+      // });
+    });
+
+    testUsingContext('does not run any operations concurrently', () async {
+      // Crete a function thats slow, but throws if another instance of the
+      // function is running.
+      bool isRunning = false;
+      Future<int> f(int ret) async {
+        if (isRunning) {
+          throw 'Functions ran concurrently!';
+        }
+        isRunning = true;
+        await Future<void>.delayed(debounceDuration * 2);
+        isRunning = false;
+        return ret;
+      }
+
+      // FakeAsync().run((FakeAsync async) async {
+        final List<Future<int>> operations = <Future<int>>[
+          queue.queueAndDebounce('OP1', debounceDuration, () => f(1)),
+          queue.queueAndDebounce('OP2', debounceDuration, () => f(2)),
+        ];
+
+        // async.elapse(debounceDuration * 5);
+        final List<int> results = await Future.wait(operations);
+
+        expect(results, orderedEquals(<int>[1, 2]));
+      // });
+    });
+  });
 }
 
 bool _notEvent(Map<String, dynamic> map) => map['event'] == null;
