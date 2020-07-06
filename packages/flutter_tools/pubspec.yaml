@@ -111,7 +111,7 @@ dependency_overrides:
   dwds:
     git:
       url: https://github.com/DanTup/webdev.git
-      ref: support-ws-debug-service
+      ref: support-ws-debug-service2
       path: dwds
 
 # PUBSPEC CHECKSUM: 7264
