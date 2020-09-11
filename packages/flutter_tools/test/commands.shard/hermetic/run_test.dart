@@ -15,6 +15,7 @@ import 'package:flutter_tools/src/base/logger.dart';
 import 'package:flutter_tools/src/base/user_messages.dart';
 import 'package:flutter_tools/src/build_info.dart';
 import 'package:flutter_tools/src/cache.dart';
+import 'package:flutter_tools/src/commands/daemon.dart';
 import 'package:flutter_tools/src/commands/run.dart';
 import 'package:flutter_tools/src/device.dart';
 import 'package:flutter_tools/src/globals.dart' as globals;
@@ -335,6 +336,42 @@ void main() {
         DeviceManager: () => mockDeviceManager,
         FileSystem: () => fs,
         ProcessManager: () => mockProcessManager,
+      });
+
+      testUsingContext('prints cache status messages in expected format in --machine', () async {
+        final RunCommand command = RunCommand();
+        applyMocksToCommand(command);
+
+        when(mockDeviceManager.getDevices()).thenAnswer((Invocation invocation) async => <Device>[]);
+        when(mockDeviceManager.findTargetDevices(any, timeout: anyNamed('timeout')))
+          .thenAnswer((Invocation invocation) async => <Device>[]);
+        when(mockCache.updateAll(<DevelopmentArtifact>{DevelopmentArtifact.universal}))
+          .thenAnswer((Invocation invocation) async {
+            globals.logger.startProgress('Downloading test items...', timeout: null).stop();
+          });
+
+        try {
+          await createTestCommandRunner(command).run(<String>[
+            'run',
+            '--machine',
+          ]);
+          fail('Exception expected');
+        } on ToolExit catch (e) {
+          // We expect a ToolExit because no devices are attached
+          expect(e.message, null);
+        } on Exception catch (e) {
+          fail('ToolExit expected, got $e');
+        }
+
+        final BufferLogger logger = (globals.logger as AppRunLogger).parent as BufferLogger;
+        expect(logger.statusText, startsWith('Downloading test items...'));
+      }, overrides: <Type, Generator>{
+        ApplicationPackageFactory: () => mockApplicationPackageFactory,
+        Cache: () => mockCache,
+        DeviceManager: () => mockDeviceManager,
+        FileSystem: () => fs,
+        ProcessManager: () => mockProcessManager,
+        Logger: () => AppRunLogger(parent: BufferLogger.test()),
       });
 
       testUsingContext('passes device target platform to usage', () async {
