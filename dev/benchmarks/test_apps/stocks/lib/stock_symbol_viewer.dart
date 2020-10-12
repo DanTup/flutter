@@ -48,6 +48,24 @@ class _StockSymbolView extends StatelessWidget {
           Container(
             height: 8.0
           ),
+          // This navigates correctly, however it leaves the Back button navigating
+          // back here, but we wanted to pop this page out of the history, as if
+          // we'd done history.back() in the browser.
+          RaisedButton(
+            child: const Text('Pop this page!'),
+            onPressed: Navigator.of(context).pop,
+            // onPressed: (Router.of(context).routerDelegate as StockRouterDelegate).popRoute,
+          ),
+          // How can we push a replacement (eg. navigate to another page, replacing
+          // the current item in the history, as if we'd done location.replace().
+          // RaisedButton(
+          //   child: Text('Switch to AAME!'),
+          //   onPressed: () => Navigator.of(context)
+          //       .pushReplacement(Page.createRoute(('/stock?symbol=AAME')),
+          // ),
+          Container(
+            height: 8.0,
+          ),
           RichText(
             text: TextSpan(
               style: DefaultTextStyle.of(context).style.merge(const TextStyle(fontSize: 8.0)),
