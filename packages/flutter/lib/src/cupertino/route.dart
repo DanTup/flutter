@@ -149,7 +149,8 @@ mixin CupertinoRouteTransitionMixin<T> on PageRoute<T> {
     return route.navigator!.userGestureInProgress;
   }
 
-  /// True if an iOS-style back swipe pop gesture is currently underway for this route.
+  /// True if an iOS-style back swipe pop gesture is currently underway for this
+  /// route.
   ///
   /// See also:
   ///
@@ -427,8 +428,8 @@ class CupertinoPage<T> extends Page<T> {
 
 /// Provides an iOS-style page transition animation.
 ///
-/// The page slides in from the right and exits in reverse. It also shifts to the left in
-/// a parallax motion when another page enters to cover it.
+/// The page slides in from the right and exits in reverse. It also shifts to
+/// the left in a parallax motion when another page enters to cover it.
 class CupertinoPageTransition extends StatelessWidget {
   /// Creates an iOS-style page transition.
   ///
@@ -571,8 +572,8 @@ class CupertinoFullscreenDialogTransition extends StatelessWidget {
 /// This is the widget side of [_CupertinoBackGestureController].
 ///
 /// This widget provides a gesture recognizer which, when it determines the
-/// route can be closed with a back gesture, creates the controller and
-/// feeds it the input from the gesture recognizer.
+/// route can be closed with a back gesture, creates the controller and feeds it
+/// the input from the gesture recognizer.
 ///
 /// The gesture data is converted from absolute coordinates to logical
 /// coordinates by this widget.
@@ -963,8 +964,8 @@ class _CupertinoEdgeShadowPainter extends BoxPainter {
   }
 }
 
-/// A route that shows a modal iOS-style popup that slides up from the
-/// bottom of the screen.
+/// A route that shows a modal iOS-style popup that slides up from the bottom of
+/// the screen.
 ///
 /// Such a popup is an alternative to a menu or a dialog and prevents the user
 /// from interacting with the rest of the app.
@@ -975,8 +976,8 @@ class _CupertinoEdgeShadowPainter extends BoxPainter {
 ///
 /// The `barrierColor` argument determines the [Color] of the barrier underneath
 /// the popup. When unspecified, the barrier color defaults to a light opacity
-/// black scrim based on iOS's dialog screens. To correctly have iOS resolve
-/// to the appropriate modal colors, pass in
+/// black scrim based on iOS's dialog screens. To correctly have iOS resolve to
+/// the appropriate modal colors, pass in
 /// `CupertinoDynamicColor.resolve(kCupertinoModalBarrierColor, context)`.
 ///
 /// The `barrierDismissible` argument determines whether clicking outside the
@@ -994,8 +995,8 @@ class _CupertinoEdgeShadowPainter extends BoxPainter {
 ///    `builder` argument.
 ///  * <https://developer.apple.com/design/human-interface-guidelines/ios/views/action-sheets/>
 class CupertinoModalPopupRoute<T> extends PopupRoute<T> {
-  /// A route that shows a modal iOS-style popup that slides up from the
-  /// bottom of the screen.
+  /// A route that shows a modal iOS-style popup that slides up from the bottom
+  /// of the screen.
   CupertinoModalPopupRoute({
     required this.builder,
     this.barrierLabel = 'Dismiss',
@@ -1245,8 +1246,8 @@ Widget _buildCupertinoDialogTransitions(BuildContext context, Animation<double> 
 /// a custom [StatefulWidget] if the dialog needs to update dynamically.
 ///
 /// The `context` argument is used to look up the [Navigator] for the dialog.
-/// It is only used when the method is called. Its corresponding widget can
-/// be safely removed from the tree before the dialog is closed.
+/// It is only used when the method is called. Its corresponding widget can be
+/// safely removed from the tree before the dialog is closed.
 ///
 /// The `useRootNavigator` argument is used to determine whether to push the
 /// dialog to the [Navigator] furthest from or nearest to the given `context`.
@@ -1270,8 +1271,8 @@ Widget _buildCupertinoDialogTransitions(BuildContext context, Animation<double> 
 ///
 /// {@tool sample --template=stateless_widget_restoration_cupertino}
 ///
-/// This sample demonstrates how to create a restorable Cupertino dialog. This is
-/// accomplished by enabling state restoration by specifying
+/// This sample demonstrates how to create a restorable Cupertino dialog. This
+/// is accomplished by enabling state restoration by specifying
 /// [CupertinoApp.restorationScopeId] and using [Navigator.restorablePush] to
 /// push [CupertinoDialogRoute] when the [CupertinoButton] is tapped.
 ///

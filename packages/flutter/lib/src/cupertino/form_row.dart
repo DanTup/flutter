@@ -79,7 +79,8 @@ const EdgeInsetsGeometry _kDefaultPadding =
 /// ```
 /// {@end-tool}
 class CupertinoFormRow extends StatelessWidget {
-  /// Creates an iOS-style split form row with a standard prefix and child widget.
+  /// Creates an iOS-style split form row with a standard prefix and child
+  /// widget.
   /// Also provides a space for error and helper widgets that appear underneath.
   ///
   /// The [child] parameter is required. This widget is displayed at the end of

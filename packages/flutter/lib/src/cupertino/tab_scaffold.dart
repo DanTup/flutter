@@ -247,7 +247,8 @@ class CupertinoTabScaffold extends StatefulWidget {
   /// respond to text scale factor changes from the operating system, to match
   /// the native iOS behavior. To override this behavior, wrap each of the `tabBar`'s
   /// items inside a [MediaQuery] with the desired [MediaQueryData.textScaleFactor]
-  /// value. The text scale factor value from the operating system can be retrieved
+  /// value. The text scale factor value from the operating system can be
+  /// retrieved
   /// int many ways, such as querying [MediaQuery.textScaleFactorOf] against
   /// [CupertinoApp]'s [BuildContext].
   ///
@@ -256,8 +257,8 @@ class CupertinoTabScaffold extends StatefulWidget {
 
   /// Controls the currently selected tab index of the [tabBar], as well as the
   /// active tab index of the [tabBuilder]. Providing a different [controller]
-  /// will also update the scaffold's current active index to the new controller's
-  /// index value.
+  /// will also update the scaffold's current active index to the new
+  /// controller's index value.
   ///
   /// Defaults to null.
   final CupertinoTabController? controller;
@@ -480,8 +481,8 @@ class _CupertinoTabScaffoldState extends State<CupertinoTabScaffold> with Restor
   }
 }
 
-/// A widget laying out multiple tabs with only one active tab being built
-/// at a time and on stage. Off stage tabs' animations are stopped.
+/// A widget laying out multiple tabs with only one active tab being built at a
+/// time and on stage. Off stage tabs' animations are stopped.
 class _TabSwitchingView extends StatefulWidget {
   const _TabSwitchingView({
     required this.currentTabIndex,

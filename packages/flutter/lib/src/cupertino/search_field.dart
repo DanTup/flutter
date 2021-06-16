@@ -14,8 +14,8 @@ import 'text_field.dart';
 /// `UISearchTextField`.
 ///
 /// This control defaults to showing the basic parts of a `UISearchTextField`,
-/// like the 'Search' placeholder, prefix-ed Search icon, and suffix-ed
-/// X-Mark icon.
+/// like the 'Search' placeholder, prefix-ed Search icon, and suffix-ed X-Mark
+/// icon.
 ///
 /// To control the text that is displayed in the text field, use the
 /// [controller]. For example, to set the initial value of the text field, use
@@ -276,9 +276,9 @@ class CupertinoSearchTextField extends StatefulWidget {
 
   /// Sets the X-Mark (suffix) action.
   ///
-  /// Defaults to clearing the text. The suffix action is customizable
-  /// so that users can override it with other functionality, that isn't
-  /// necessarily clearing text.
+  /// Defaults to clearing the text. The suffix action is customizable so that
+  /// users can override it with other functionality, that isn't necessarily
+  /// clearing text.
   final VoidCallback? onSuffixTap;
 
   /// {@macro flutter.material.textfield.restorationId}

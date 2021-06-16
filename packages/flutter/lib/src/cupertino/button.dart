@@ -18,8 +18,8 @@ const EdgeInsets _kBackgroundButtonPadding = EdgeInsets.symmetric(
 
 /// An iOS-style button.
 ///
-/// Takes in a text or an icon that fades out and in on touch. May optionally have a
-/// background.
+/// Takes in a text or an icon that fades out and in on touch. May optionally
+/// have a background.
 ///
 /// The [padding] defaults to 16.0 pixels. When using a [CupertinoButton] within
 /// a fixed height parent, like a [CupertinoNavigationBar], a smaller, or even
@@ -97,7 +97,8 @@ class CupertinoButton extends StatefulWidget {
   /// specified. Must not be null.
   final Color disabledColor;
 
-  /// The callback that is called when the button is tapped or otherwise activated.
+  /// The callback that is called when the button is tapped or otherwise
+  /// activated.
   ///
   /// If this is set to null, the button will be disabled.
   final VoidCallback? onPressed;
@@ -122,7 +123,8 @@ class CupertinoButton extends StatefulWidget {
 
   /// The alignment of the button's [child].
   ///
-  /// Typically buttons are sized to be just big enough to contain the child and its
+  /// Typically buttons are sized to be just big enough to contain the child and
+  /// its
   /// [padding]. If the button's size is constrained to a fixed size, for example by
   /// enclosing it with a [SizedBox], this property defines how the child is aligned
   /// within the available space.
@@ -132,7 +134,8 @@ class CupertinoButton extends StatefulWidget {
 
   final bool _filled;
 
-  /// Whether the button is enabled or disabled. Buttons are disabled by default. To
+  /// Whether the button is enabled or disabled. Buttons are disabled by
+  /// default. To
   /// enable a button, set its [onPressed] property to a non-null value.
   bool get enabled => onPressed != null;
 

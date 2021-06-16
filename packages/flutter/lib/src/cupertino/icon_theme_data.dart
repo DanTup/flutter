@@ -11,8 +11,8 @@ import 'colors.dart';
 class CupertinoIconThemeData extends IconThemeData with Diagnosticable {
   /// Creates a [CupertinoIconThemeData].
   ///
-  /// The opacity applies to both explicit and default icon colors. The value
-  /// is clamped between 0.0 and 1.0.
+  /// The opacity applies to both explicit and default icon colors. The value is
+  /// clamped between 0.0 and 1.0.
   const CupertinoIconThemeData({
     Color? color,
     double? opacity,

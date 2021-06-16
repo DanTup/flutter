@@ -321,8 +321,8 @@ class CupertinoSlidingSegmentedControl<T> extends StatefulWidget {
        ),
        super(key: key);
 
-  /// The identifying keys and corresponding widget values in the
-  /// segmented control.
+  /// The identifying keys and corresponding widget values in the segmented
+  /// control.
   ///
   /// This attribute must be an ordered [Map] such as a [LinkedHashMap]. Each
   /// widget is typically a single-line [Text] widget or an [Icon] widget.
@@ -340,8 +340,8 @@ class CupertinoSlidingSegmentedControl<T> extends StatefulWidget {
   ///
   /// This attribute must not be null.
   ///
-  /// The segmented control passes the newly selected widget's associated key
-  /// to the callback but does not actually change state until the parent
+  /// The segmented control passes the newly selected widget's associated key to
+  /// the callback but does not actually change state until the parent
   /// widget rebuilds the segmented control with the new [groupValue].
   ///
   /// The callback provided to [onValueChanged] should update the state of
@@ -398,7 +398,8 @@ class CupertinoSlidingSegmentedControl<T> extends StatefulWidget {
 
   /// The amount of space by which to inset the [children].
   ///
-  /// Must not be null. Defaults to EdgeInsets.symmetric(vertical: 2, horizontal: 3).
+  /// Must not be null. Defaults to EdgeInsets.symmetric(vertical: 2,
+  /// horizontal: 3).
   final EdgeInsetsGeometry padding;
 
   @override

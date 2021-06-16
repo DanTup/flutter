@@ -28,8 +28,8 @@ const _CupertinoThemeDefaults _kDefaultTheme = _CupertinoThemeDefaults(
 
 /// Applies a visual styling theme to descendant Cupertino widgets.
 ///
-/// Affects the color and text styles of Cupertino widgets whose styling
-/// are not overridden when constructing the respective widgets instances.
+/// Affects the color and text styles of Cupertino widgets whose styling are not
+/// overridden when constructing the respective widgets instances.
 ///
 /// Descendant widgets can retrieve the current [CupertinoThemeData] by calling
 /// [CupertinoTheme.of]. An [InheritedWidget] dependency is created when
@@ -384,8 +384,8 @@ class NoDefaultCupertinoThemeData {
 
   /// Background color of the top nav bar and bottom tab bar.
   ///
-  /// Defaults to a light gray in light mode, or a dark translucent gray color in
-  /// dark mode.
+  /// Defaults to a light gray in light mode, or a dark translucent gray color
+  /// in dark mode.
   final Color? barBackgroundColor;
 
   /// Background color of the scaffold.

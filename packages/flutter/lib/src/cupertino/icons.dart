@@ -12,7 +12,8 @@ import 'package:flutter/widgets.dart';
 ///
 /// To use this class, make sure you add a dependency on `cupertino_icons` in your
 /// project's `pubspec.yaml` file. This ensures that the CupertinoIcons font is
-/// included in your application. This font is used to display the icons. For example:
+/// included in your application. This font is used to display the icons. For
+/// example:
 ///
 /// ```yaml
 /// name: my_awesome_application

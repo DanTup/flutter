@@ -28,9 +28,9 @@ class CupertinoColors {
   /// This is SystemBlue in the iOS palette.
   static const CupertinoDynamicColor activeBlue = systemBlue;
 
-  /// iOS 13's default green color. Used to indicate active accents such as
-  /// the switch in its on state and some accent buttons such as the call button
-  /// and Apple Map's 'Go' button.
+  /// iOS 13's default green color. Used to indicate active accents such as the
+  /// switch in its on state and some accent buttons such as the call button and
+  /// Apple Map's 'Go' button.
   ///
   /// This is SystemGreen in the iOS palette.
   static const CupertinoDynamicColor activeGreen = systemGreen;
@@ -40,7 +40,8 @@ class CupertinoColors {
   /// This is SystemOrange in the iOS palette.
   static const CupertinoDynamicColor activeOrange = systemOrange;
 
-  /// Opaque white color. Used for backgrounds and fonts against dark backgrounds.
+  /// Opaque white color. Used for backgrounds and fonts against dark
+  /// backgrounds.
   ///
   /// This is SystemWhiteColor in the iOS palette.
   ///
@@ -60,18 +61,20 @@ class CupertinoColors {
   ///  * [white], opaque white in the [CupertinoColors] palette.
   static const Color black = Color(0xFF000000);
 
-  /// Used in iOS 10 for light background fills such as the chat bubble background.
+  /// Used in iOS 10 for light background fills such as the chat bubble
+  /// background.
   ///
   /// This is SystemLightGrayColor in the iOS palette.
   static const Color lightBackgroundGray = Color(0xFFE5E5EA);
 
-  /// Used in iOS 12 for very light background fills in tables between cell groups.
+  /// Used in iOS 12 for very light background fills in tables between cell
+  /// groups.
   ///
   /// This is SystemExtraLightGrayColor in the iOS palette.
   static const Color extraLightBackgroundGray = Color(0xFFEFEFF4);
 
-  /// Used in iOS 12 for very dark background fills in tables between cell groups
-  /// in dark mode.
+  /// Used in iOS 12 for very dark background fills in tables between cell
+  /// groups in dark mode.
   // Value derived from screenshot from the dark themed Apple Watch app.
   static const Color darkBackgroundGray = Color(0xFF171717);
 
@@ -404,7 +407,8 @@ class CupertinoColors {
     darkHighContrastElevatedColor: Color.fromARGB(81, 118, 118, 128),
   );
 
-  /// An overlay fill color for large areas containing complex content, equivalent
+  /// An overlay fill color for large areas containing complex content,
+  /// equivalent
   /// to [UIColor.quaternarySystemFill](https://developer.apple.com/documentation/uikit/uicolor/3255068-quaternarysystemfill).
   static const CupertinoDynamicColor quaternarySystemFill = CupertinoDynamicColor(
     debugLabel: 'quaternarySystemFill',
@@ -435,7 +439,8 @@ class CupertinoColors {
   /// The color for the main background of your interface, equivalent to
   /// [UIColor.systemBackground](https://developer.apple.com/documentation/uikit/uicolor/3173140-systembackground).
   ///
-  /// Typically used for designs that have a white primary background in a light environment.
+  /// Typically used for designs that have a white primary background in a light
+  /// environment.
   static const CupertinoDynamicColor systemBackground = CupertinoDynamicColor(
     debugLabel: 'systemBackground',
     color: Color.fromARGB(255, 255, 255, 255),
@@ -451,7 +456,8 @@ class CupertinoColors {
   /// The color for content layered on top of the main background, equivalent to
   /// [UIColor.secondarySystemBackground](https://developer.apple.com/documentation/uikit/uicolor/3173137-secondarysystembackground).
   ///
-  /// Typically used for designs that have a white primary background in a light environment.
+  /// Typically used for designs that have a white primary background in a light
+  /// environment.
   static const CupertinoDynamicColor secondarySystemBackground = CupertinoDynamicColor(
     debugLabel: 'secondarySystemBackground',
     color: Color.fromARGB(255, 242, 242, 247),
@@ -467,7 +473,8 @@ class CupertinoColors {
   /// The color for content layered on top of secondary backgrounds, equivalent
   /// to [UIColor.tertiarySystemBackground](https://developer.apple.com/documentation/uikit/uicolor/3173154-tertiarysystembackground).
   ///
-  /// Typically used for designs that have a white primary background in a light environment.
+  /// Typically used for designs that have a white primary background in a light
+  /// environment.
   static const CupertinoDynamicColor tertiarySystemBackground = CupertinoDynamicColor(
     debugLabel: 'tertiarySystemBackground',
     color: Color.fromARGB(255, 255, 255, 255),
@@ -483,7 +490,8 @@ class CupertinoColors {
   /// The color for the main background of your grouped interface, equivalent to
   /// [UIColor.systemGroupedBackground](https://developer.apple.com/documentation/uikit/uicolor/3173145-systemgroupedbackground).
   ///
-  /// Typically used for grouped content, including table views and platter-based designs.
+  /// Typically used for grouped content, including table views and
+  /// platter-based designs.
   static const CupertinoDynamicColor systemGroupedBackground = CupertinoDynamicColor(
     debugLabel: 'systemGroupedBackground',
     color: Color.fromARGB(255, 242, 242, 247),
@@ -496,10 +504,12 @@ class CupertinoColors {
     darkHighContrastElevatedColor: Color.fromARGB(255, 36, 36, 38),
   );
 
-  /// The color for content layered on top of the main background of your grouped interface,
+  /// The color for content layered on top of the main background of your
+  /// grouped interface,
   /// equivalent to [UIColor.secondarySystemGroupedBackground](https://developer.apple.com/documentation/uikit/uicolor/3173138-secondarysystemgroupedbackground).
   ///
-  /// Typically used for grouped content, including table views and platter-based designs.
+  /// Typically used for grouped content, including table views and
+  /// platter-based designs.
   static const CupertinoDynamicColor secondarySystemGroupedBackground = CupertinoDynamicColor(
     debugLabel: 'secondarySystemGroupedBackground',
     color: Color.fromARGB(255, 255, 255, 255),
@@ -512,10 +522,12 @@ class CupertinoColors {
     darkHighContrastElevatedColor: Color.fromARGB(255, 54, 54, 56),
   );
 
-  /// The color for content layered on top of secondary backgrounds of your grouped interface,
+  /// The color for content layered on top of secondary backgrounds of your
+  /// grouped interface,
   /// equivalent to [UIColor.tertiarySystemGroupedBackground](https://developer.apple.com/documentation/uikit/uicolor/3173155-tertiarysystemgroupedbackground).
   ///
-  /// Typically used for grouped content, including table views and platter-based designs.
+  /// Typically used for grouped content, including table views and
+  /// platter-based designs.
   static const CupertinoDynamicColor tertiarySystemGroupedBackground = CupertinoDynamicColor(
     debugLabel: 'tertiarySystemGroupedBackground',
     color: Color.fromARGB(255, 242, 242, 247),
@@ -528,7 +540,8 @@ class CupertinoColors {
     darkHighContrastElevatedColor: Color.fromARGB(255, 68, 68, 70),
   );
 
-  /// The color for thin borders or divider lines that allows some underlying content to be visible,
+  /// The color for thin borders or divider lines that allows some underlying
+  /// content to be visible,
   /// equivalent to [UIColor.separator](https://developer.apple.com/documentation/uikit/uicolor/3173139-separator).
   static const CupertinoDynamicColor separator = CupertinoDynamicColor(
     debugLabel: 'separator',
@@ -577,7 +590,8 @@ class CupertinoColors {
 /// When used as a regular color, [CupertinoDynamicColor] is equivalent to the
 /// effective color (i.e. [CupertinoDynamicColor.value] will come from the effective
 /// color), which is determined by the [BuildContext] it is last resolved against.
-/// If it has never been resolved, the light, normal contrast, base elevation variant
+/// If it has never been resolved, the light, normal contrast, base elevation
+/// variant
 /// [CupertinoDynamicColor.color] will be the default effective color.
 ///
 /// Sometimes manually resolving a [CupertinoDynamicColor] is not necessary, because
@@ -635,7 +649,8 @@ class CupertinoColors {
 ///
 /// ### Manually Resolving a [CupertinoDynamicColor]
 ///
-/// When used to configure a non-Cupertino widget, or wrapped in an object opaque
+/// When used to configure a non-Cupertino widget, or wrapped in an object
+/// opaque
 /// to the receiving Cupertino component, a [CupertinoDynamicColor] may need to be
 /// manually resolved using [CupertinoDynamicColor.resolve], before it can used
 /// to paint. For example, to use a custom [Border] in a [CupertinoNavigationBar],
@@ -955,14 +970,16 @@ class CupertinoDynamicColor extends Color with Diagnosticable {
   /// except its effective color will be the `darkHighContrastElevatedColor`
   /// variant from the original [CupertinoDynamicColor].
   ///
-  /// Calling this function may create dependencies on the closest instance of some
+  /// Calling this function may create dependencies on the closest instance of
+  /// some
   /// [InheritedWidget]s that enclose the given [BuildContext]. E.g., if [darkColor]
   /// is different from [color], this method will call [CupertinoTheme.of], and
   /// then [MediaQuery.of] if brightness wasn't specified in the theme data retrieved
   /// from the previous [CupertinoTheme.of] call, in an effort to determine the
   /// brightness value.
   ///
-  /// If any of the required dependencies are missing from the given context, the
+  /// If any of the required dependencies are missing from the given context,
+  /// the
   /// default value of that trait will be used ([Brightness.light] platform
   /// brightness, normal contrast, [CupertinoUserInterfaceLevelData.base] elevation
   /// level).

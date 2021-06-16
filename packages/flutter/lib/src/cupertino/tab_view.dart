@@ -61,8 +61,8 @@ class CupertinoTabView extends StatefulWidget {
   ///
   /// Rebuilding a [CupertinoTabView] with a different [builder] will not clear
   /// its current navigation stack or update its descendant. Instead, trigger a
-  /// rebuild from a descendant in its subtree. This can be done via methods such
-  /// as:
+  /// rebuild from a descendant in its subtree. This can be done via methods
+  /// such as:
   ///
   ///  * Calling [State.setState] on a descendant [StatefulWidget]'s [State]
   ///  * Modifying an [InheritedWidget] that a descendant registered itself
@@ -106,7 +106,8 @@ class CupertinoTabView extends StatefulWidget {
   /// descendant [Navigator]s.
   final Map<String, WidgetBuilder>? routes;
 
-  /// The route generator callback used when the tab view is navigated to a named route.
+  /// The route generator callback used when the tab view is navigated to a
+  /// named route.
   ///
   /// This is used if [routes] does not contain the requested route.
   final RouteFactory? onGenerateRoute;

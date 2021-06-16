@@ -419,12 +419,12 @@ class CupertinoAlertDialog extends StatelessWidget {
   }
 }
 
-/// Rounded rectangle surface that looks like an iOS popup surface, e.g., alert dialog
-/// and action sheet.
+/// Rounded rectangle surface that looks like an iOS popup surface, e.g., alert
+/// dialog and action sheet.
 ///
 /// A [CupertinoPopupSurface] can be configured to paint or not paint a white
-/// color on top of its blurred area. Typical usage should paint white on top
-/// of the blur. However, the white paint can be disabled for the purpose of
+/// color on top of its blurred area. Typical usage should paint white on top of
+/// the blur. However, the white paint can be disabled for the purpose of
 /// rendering divider gaps for a more complicated layout, e.g., [CupertinoAlertDialog].
 /// Additionally, the white paint can be disabled to render a blurred rounded
 /// rectangle without any color (similar to iOS's volume control popup).
@@ -474,11 +474,11 @@ class CupertinoPopupSurface extends StatelessWidget {
 ///
 /// {@youtube 560 315 https://www.youtube.com/watch?v=U-ao8p4A82k}
 ///
-/// An action sheet is a specific style of alert that presents the user
-/// with a set of two or more choices related to the current context.
-/// An action sheet can have a title, an additional message, and a list
-/// of actions. The title is displayed above the message and the actions
-/// are displayed below this content.
+/// An action sheet is a specific style of alert that presents the user with a
+/// set of two or more choices related to the current context.
+/// An action sheet can have a title, an additional message, and a list of
+/// actions. The title is displayed above the message and the actions are
+/// displayed below this content.
 ///
 /// This action sheet styles its title and message to match standard iOS action
 /// sheet title and message text style.
@@ -556,8 +556,8 @@ class CupertinoActionSheet extends StatelessWidget {
   /// An action sheet must have a non-null value for at least one of the
   /// following arguments: [actions], [title], [message], or [cancelButton].
   ///
-  /// Generally, action sheets are used to give the user a choice between
-  /// two or more choices for the current context.
+  /// Generally, action sheets are used to give the user a choice between two or
+  /// more choices for the current context.
   const CupertinoActionSheet({
     Key? key,
     this.title,
@@ -593,8 +593,7 @@ class CupertinoActionSheet extends StatelessWidget {
   /// A scroll controller that can be used to control the scrolling of the
   /// [message] in the action sheet.
   ///
-  /// This attribute is typically not needed, as alert messages should be
-  /// short.
+  /// This attribute is typically not needed, as alert messages should be short.
   final ScrollController? messageScrollController;
 
   ScrollController get _effectiveMessageScrollController =>

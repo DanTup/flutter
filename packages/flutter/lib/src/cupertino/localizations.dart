@@ -236,8 +236,8 @@ abstract class CupertinoLocalizations {
   // The global version uses the translated string from the arb file.
   String get searchTextFieldPlaceholderLabel;
 
-  /// Label read out by accessibility tools (VoiceOver) for a modal
-  /// barrier to indicate that a tap dismisses the barrier.
+  /// Label read out by accessibility tools (VoiceOver) for a modal barrier to
+  /// indicate that a tap dismisses the barrier.
   ///
   /// A modal barrier can for example be found behind an alert or popup to block
   /// user interaction with elements behind it.

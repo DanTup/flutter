@@ -19,8 +19,8 @@ import 'package:flutter/foundation.dart';
 ///  * [Curve], a 1D animation easing curve that starts at 0.0 and ends at 1.0.
 ///  * [Curve2D], a parametric curve that transforms the parameter to a 2D point.
 abstract class ParametricCurve<T> {
-  /// Abstract const constructor to enable subclasses to provide
-  /// const constructors so that they can be used in const expressions.
+  /// Abstract const constructor to enable subclasses to provide const
+  /// constructors so that they can be used in const expressions.
   const ParametricCurve();
 
   /// Returns the value of the curve at point `t`.
@@ -69,8 +69,8 @@ abstract class ParametricCurve<T> {
 ///    arbitrary values.
 @immutable
 abstract class Curve extends ParametricCurve<double> {
-  /// Abstract const constructor to enable subclasses to provide
-  /// const constructors so that they can be used in const expressions.
+  /// Abstract const constructor to enable subclasses to provide const
+  /// constructors so that they can be used in const expressions.
   const Curve();
 
   /// Returns the value of the curve at point `t`.
@@ -117,7 +117,8 @@ class _Linear extends Curve {
   double transformInternal(double t) => t;
 }
 
-/// A sawtooth curve that repeats a given number of times over the unit interval.
+/// A sawtooth curve that repeats a given number of times over the unit
+/// interval.
 ///
 /// The curve rises linearly from 0.0 to 1.0 and then falls discontinuously back
 /// to 0.0 each iteration.
@@ -403,7 +404,8 @@ class ThreePointCubic extends Curve {
 /// map `t=0.0` and `t=1.0` to specific output values.
 ///
 /// The interpolated `t` value given to [transform] represents the progression
-/// along the curve, but it doesn't necessarily progress at a constant velocity, so
+/// along the curve, but it doesn't necessarily progress at a constant velocity,
+/// so
 /// incrementing `t` by, say, 0.1 might move along the curve by quite a lot at one
 /// part of the curve, or hardly at all in another part of the curve, depending
 /// on the definition of the curve.
@@ -877,8 +879,8 @@ class CatmullRomCurve extends Curve {
   ///
   /// The optional [tension] argument controls how tightly the curve approaches
   /// the given `controlPoints`. It must be in the range 0.0 to 1.0, inclusive. It
-  /// defaults to 0.0, which provides the smoothest curve. A value of 1.0
-  /// is equivalent to a linear interpolation between points.
+  /// defaults to 0.0, which provides the smoothest curve. A value of 1.0 is
+  /// equivalent to a linear interpolation between points.
   ///
   /// The internal curve data structures are lazily computed the first time
   /// [transform] is called.  If you would rather pre-compute the curve, use
@@ -962,8 +964,8 @@ class CatmullRomCurve extends Curve {
   /// the reasons if the assert fires.
   ///
   /// When the curve is evaluated with [transform], the values will interpolate
-  /// smoothly from one control point to the next, passing through (0.0, 0.0), the
-  /// given control points, and (1.0, 1.0).
+  /// smoothly from one control point to the next, passing through (0.0, 0.0),
+  /// the given control points, and (1.0, 1.0).
   final List<Offset> controlPoints;
 
   /// The "tension" of the curve.
@@ -1293,7 +1295,8 @@ class ElasticInCurve extends Curve {
   }
 }
 
-/// An oscillating curve that shrinks in magnitude while overshooting its bounds.
+/// An oscillating curve that shrinks in magnitude while overshooting its
+/// bounds.
 ///
 /// An instance of this class using the default period of 0.4 is available as
 /// [Curves.elasticOut].
@@ -1414,7 +1417,8 @@ class Curves {
   /// {@animation 464 192 https://flutter.github.io/assets-for-api-docs/assets/animation/curve_linear.mp4}
   static const Curve linear = _Linear._();
 
-  /// A curve where the rate of change starts out quickly and then decelerates; an
+  /// A curve where the rate of change starts out quickly and then decelerates;
+  /// an
   /// upside-down `f(t) = t²` parabola.
   ///
   /// This is equivalent to the Android `DecelerateInterpolator` class with a unit
@@ -1423,11 +1427,11 @@ class Curves {
   /// {@animation 464 192 https://flutter.github.io/assets-for-api-docs/assets/animation/curve_decelerate.mp4}
   static const Curve decelerate = _DecelerateCurve._();
 
-  /// A curve that is very steep and linear at the beginning, but quickly flattens out
-  /// and very slowly eases in.
+  /// A curve that is very steep and linear at the beginning, but quickly
+  /// flattens out and very slowly eases in.
   ///
-  /// By default is the curve used to animate pages on iOS back to their original
-  /// position if a swipe gesture is ended midway through a swipe.
+  /// By default is the curve used to animate pages on iOS back to their
+  /// original position if a swipe gesture is ended midway through a swipe.
   ///
   /// {@animation 464 192 https://flutter.github.io/assets-for-api-docs/assets/animation/curve_fast_linear_to_slow_ease_in.mp4}
   static const Cubic fastLinearToSlowEaseIn = Cubic(0.18, 1.0, 0.04, 1.0);
@@ -1795,17 +1799,20 @@ class Curves {
   /// {@animation 464 192 https://flutter.github.io/assets-for-api-docs/assets/animation/curve_bounce_in_out.mp4}
   static const Curve bounceInOut = _BounceInOutCurve._();
 
-  /// An oscillating curve that grows in magnitude while overshooting its bounds.
+  /// An oscillating curve that grows in magnitude while overshooting its
+  /// bounds.
   ///
   /// {@animation 464 192 https://flutter.github.io/assets-for-api-docs/assets/animation/curve_elastic_in.mp4}
   static const ElasticInCurve elasticIn = ElasticInCurve();
 
-  /// An oscillating curve that shrinks in magnitude while overshooting its bounds.
+  /// An oscillating curve that shrinks in magnitude while overshooting its
+  /// bounds.
   ///
   /// {@animation 464 192 https://flutter.github.io/assets-for-api-docs/assets/animation/curve_elastic_out.mp4}
   static const ElasticOutCurve elasticOut = ElasticOutCurve();
 
-  /// An oscillating curve that grows and then shrinks in magnitude while overshooting its bounds.
+  /// An oscillating curve that grows and then shrinks in magnitude while
+  /// overshooting its bounds.
   ///
   /// {@animation 464 192 https://flutter.github.io/assets-for-api-docs/assets/animation/curve_elastic_in_out.mp4}
   static const ElasticInOutCurve elasticInOut = ElasticInOutCurve();

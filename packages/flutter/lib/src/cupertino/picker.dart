@@ -22,8 +22,8 @@ const double _kOverAndUnderCenterOpacity = 0.447;
 
 /// An iOS-styled picker.
 ///
-/// Displays its children widgets on a wheel for selection and
-/// calls back when the currently selected item changes.
+/// Displays its children widgets on a wheel for selection and calls back when
+/// the currently selected item changes.
 ///
 /// By default, the first child in `children` will be the initially selected child.
 /// The index of a different child can be specified in [scrollController], to make
@@ -51,8 +51,8 @@ class CupertinoPicker extends StatefulWidget {
   ///
   /// The [backgroundColor] defaults to null, which disables background painting entirely.
   /// (i.e. the picker is going to have a completely transparent background), to match
-  /// the native UIPicker and UIDatePicker. Also, if it has transparency, no gradient
-  /// effect will be rendered.
+  /// the native UIPicker and UIDatePicker. Also, if it has transparency, no
+  /// gradient effect will be rendered.
   ///
   /// The [scrollController] argument can be used to specify a custom
   /// [FixedExtentScrollController] for programmatically reading or changing
@@ -131,7 +131,8 @@ class CupertinoPicker extends StatefulWidget {
        childDelegate = ListWheelChildBuilderDelegate(builder: itemBuilder, childCount: childCount),
        super(key: key);
 
-  /// Relative ratio between this picker's height and the simulated cylinder's diameter.
+  /// Relative ratio between this picker's height and the simulated cylinder's
+  /// diameter.
   ///
   /// Smaller values creates more pronounced curvatures in the scrollable wheel.
   ///
@@ -354,10 +355,12 @@ class CupertinoPickerDefaultSelectionOverlay extends StatelessWidget {
        assert(capRightEdge != null),
        super(key: key);
 
-  /// Whether to use the default use rounded corners and margin on the left side.
+  /// Whether to use the default use rounded corners and margin on the left
+  /// side.
   final bool capLeftEdge;
 
-  /// Whether to use the default use rounded corners and margin on the right side.
+  /// Whether to use the default use rounded corners and margin on the right
+  /// side.
   final bool capRightEdge;
 
   /// The color to fill in the background of the [CupertinoPickerDefaultSelectionOverlay].

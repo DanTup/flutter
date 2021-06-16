@@ -6,9 +6,9 @@
 ///
 /// To use, import `package:flutter/painting.dart`.
 ///
-/// This library includes a variety of classes that wrap the Flutter
-/// engine's painting API for more specialized purposes, such as painting scaled
-/// images, interpolating between shadows, painting borders around boxes, etc.
+/// This library includes a variety of classes that wrap the Flutter engine's
+/// painting API for more specialized purposes, such as painting scaled images,
+/// interpolating between shadows, painting borders around boxes, etc.
 ///
 /// In particular:
 ///

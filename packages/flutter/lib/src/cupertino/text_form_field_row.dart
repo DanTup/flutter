@@ -21,8 +21,8 @@ import 'text_field.dart';
 /// defines the [initialValue]. If this [FormField] is part of a scrolling
 /// container that lazily constructs its children, like a [ListView] or a
 /// [CustomScrollView], then a [controller] should be specified.
-/// The controller's lifetime should be managed by a stateful widget ancestor
-/// of the scrolling container.
+/// The controller's lifetime should be managed by a stateful widget ancestor of
+/// the scrolling container.
 ///
 /// The [prefix] parameter is displayed at the start of the row. Standard iOS
 /// guidelines encourage passing a [Text] widget to [prefix] to detail the

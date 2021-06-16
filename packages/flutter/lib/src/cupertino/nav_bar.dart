@@ -23,7 +23,8 @@ import 'theme.dart';
 /// This height is constant and independent of accessibility as it is in iOS.
 const double _kNavBarPersistentHeight = kMinInteractiveDimensionCupertino;
 
-/// Size increase from expanding the navigation bar into an iOS-11-style large title
+/// Size increase from expanding the navigation bar into an iOS-11-style large
+/// title
 /// form in a [CustomScrollView].
 const double _kNavBarLargeTitleHeightExtension = 52.0;
 
@@ -142,22 +143,24 @@ bool _isTransitionable(BuildContext context) {
 
 /// An iOS-styled navigation bar.
 ///
-/// The navigation bar is a toolbar that minimally consists of a widget, normally
+/// The navigation bar is a toolbar that minimally consists of a widget,
+/// normally
 /// a page title, in the [middle] of the toolbar.
 ///
 /// It also supports a [leading] and [trailing] widget before and after the
 /// [middle] widget while keeping the [middle] widget centered.
 ///
 /// The [leading] widget will automatically be a back chevron icon button (or a
-/// close button in case of a fullscreen dialog) to pop the current route if none
+/// close button in case of a fullscreen dialog) to pop the current route if
+/// none
 /// is provided and [automaticallyImplyLeading] is true (true by default).
 ///
 /// The [middle] widget will automatically be a title text from the current
 /// [CupertinoPageRoute] if none is provided and [automaticallyImplyMiddle] is
 /// true (true by default).
 ///
-/// It should be placed at top of the screen and automatically accounts for
-/// the OS's status bar.
+/// It should be placed at top of the screen and automatically accounts for the
+/// OS's status bar.
 ///
 /// If the given [backgroundColor]'s opacity is not 1.0 (which is the case by
 /// default), it will produce a blurring effect to the content behind it.
@@ -175,11 +178,13 @@ bool _isTransitionable(BuildContext context) {
 /// behavior for multiple navigation bars per route.
 ///
 /// When used in a [CupertinoPageScaffold], [CupertinoPageScaffold.navigationBar]
-/// has its text scale factor set to 1.0 and does not respond to text scale factor
-/// changes from the operating system, to match the native iOS behavior. To override
+/// has its text scale factor set to 1.0 and does not respond to text scale
+/// factor changes from the operating system, to match the native iOS behavior.
+/// To override
 /// this behavior, wrap each of the `navigationBar`'s components inside a [MediaQuery]
 /// with the desired [MediaQueryData.textScaleFactor] value. The text scale factor
-/// value from the operating system can be retrieved in many ways, such as querying
+/// value from the operating system can be retrieved in many ways, such as
+/// querying
 /// [MediaQuery.textScaleFactorOf] against [CupertinoApp]'s [BuildContext].
 ///
 /// {@tool dartpad --template=stateful_widget_cupertino}
@@ -297,8 +302,8 @@ class CupertinoNavigationBar extends StatefulWidget implements ObstructingPrefer
   /// {@endtemplate}
   final String? previousPageTitle;
 
-  /// Widget to place in the middle of the navigation bar. Normally a title or
-  /// a segmented control.
+  /// Widget to place in the middle of the navigation bar. Normally a title or a
+  /// segmented control.
   ///
   /// If null and [automaticallyImplyMiddle] is true, an appropriate [Text]
   /// title will be created if the current route is a [CupertinoPageRoute] and
@@ -306,8 +311,8 @@ class CupertinoNavigationBar extends StatefulWidget implements ObstructingPrefer
   final Widget? middle;
 
   /// {@template flutter.cupertino.CupertinoNavigationBar.trailing}
-  /// Widget to place at the end of the navigation bar. Normally additional actions
-  /// taken on the page such as a search or edit function.
+  /// Widget to place at the end of the navigation bar. Normally additional
+  /// actions taken on the page such as a search or edit function.
   /// {@endtemplate}
   final Widget? trailing;
 
@@ -315,8 +320,8 @@ class CupertinoNavigationBar extends StatefulWidget implements ObstructingPrefer
   // support for double row navigation bars.
 
   /// {@template flutter.cupertino.CupertinoNavigationBar.backgroundColor}
-  /// The background color of the navigation bar. If it contains transparency, the
-  /// tab bar will automatically produce a blurring effect to the content
+  /// The background color of the navigation bar. If it contains transparency,
+  /// the tab bar will automatically produce a blurring effect to the content
   /// behind it.
   ///
   /// Defaults to [CupertinoTheme]'s `barBackgroundColor` if null.
@@ -330,7 +335,8 @@ class CupertinoNavigationBar extends StatefulWidget implements ObstructingPrefer
   /// used to increase the contrast ratio of the system status bar over
   /// [backgroundColor].
   ///
-  /// If set to null, the value of the property will be inferred from the relative
+  /// If set to null, the value of the property will be inferred from the
+  /// relative
   /// luminance of [backgroundColor].
   /// {@endtemplate}
   final Brightness? brightness;
@@ -351,7 +357,8 @@ class CupertinoNavigationBar extends StatefulWidget implements ObstructingPrefer
   final EdgeInsetsDirectional? padding;
 
   /// {@template flutter.cupertino.CupertinoNavigationBar.border}
-  /// The border of the navigation bar. By default renders a single pixel bottom border side.
+  /// The border of the navigation bar. By default renders a single pixel bottom
+  /// border side.
   ///
   /// If a border is null, the navigation bar will not display a border.
   /// {@endtemplate}
@@ -495,21 +502,23 @@ class _CupertinoNavigationBarState extends State<CupertinoNavigationBar> {
 /// This navigation bar consists of two sections, a pinned static section on top
 /// and a sliding section containing iOS-11-style large title below it.
 ///
-/// It should be placed at top of the screen and automatically accounts for
-/// the iOS status bar.
+/// It should be placed at top of the screen and automatically accounts for the
+/// iOS status bar.
 ///
 /// Minimally, a [largeTitle] widget will appear in the middle of the app bar
 /// when the sliver is collapsed and transfer to the area below in larger font
 /// when the sliver is expanded.
 ///
 /// For advanced uses, an optional [middle] widget can be supplied to show a
-/// different widget in the middle of the navigation bar when the sliver is collapsed.
+/// different widget in the middle of the navigation bar when the sliver is
+/// collapsed.
 ///
 /// Like [CupertinoNavigationBar], it also supports a [leading] and [trailing]
 /// widget on the static section on top that remains while scrolling.
 ///
 /// The [leading] widget will automatically be a back chevron icon button (or a
-/// close button in case of a fullscreen dialog) to pop the current route if none
+/// close button in case of a fullscreen dialog) to pop the current route if
+/// none
 /// is provided and [automaticallyImplyLeading] is true (true by default).
 ///
 /// The [largeTitle] widget will automatically be a title text from the current
@@ -531,7 +540,8 @@ class _CupertinoNavigationBarState extends State<CupertinoNavigationBar> {
 ///
 /// `CupertinoSliverNavigationBar` has its text scale factor set to 1.0 by default
 /// and does not respond to text scale factor changes from the operating system,
-/// to match the native iOS behavior. To override this behavior, wrap each of the
+/// to match the native iOS behavior. To override this behavior, wrap each of
+/// the
 /// `CupertinoSliverNavigationBar`'s components inside a [MediaQuery] with the
 /// desired [MediaQueryData.textScaleFactor] value. The text scale factor value
 /// from the operating system can be retrieved in many ways, such as querying
@@ -881,8 +891,8 @@ class _LargeTitleNavigationBarSliverDelegate
 
 /// The top part of the navigation bar that's never scrolled away.
 ///
-/// Consists of the entire navigation bar without background and border when used
-/// without large titles. With large titles, it's the top static half that
+/// Consists of the entire navigation bar without background and border when
+/// used without large titles. With large titles, it's the top static half that
 /// doesn't scroll.
 class _PersistentNavigationBar extends StatelessWidget {
   const _PersistentNavigationBar({
@@ -1458,8 +1468,8 @@ class _BackLabel extends StatelessWidget {
 /// This should always be the first child of Hero widgets.
 ///
 /// This class helps each Hero transition obtain the start or end navigation
-/// bar's box size and the inner components of the navigation bar that will
-/// move around.
+/// bar's box size and the inner components of the navigation bar that will move
+/// around.
 ///
 /// It should be wrapped around the biggest [RenderBox] of the static
 /// navigation bar in each route.
@@ -1636,8 +1646,8 @@ class _NavigationBarTransition extends StatelessWidget {
 /// their appearance.
 ///
 /// Instead of running the transitional components through their normal static
-/// navigation bar layout logic, this creates transitional widgets that are based
-/// on these widgets' existing render objects' layout and position.
+/// navigation bar layout logic, this creates transitional widgets that are
+/// based on these widgets' existing render objects' layout and position.
 ///
 /// This is possible because this widget is only used during Hero transitions
 /// where both the from and to routes are already built and laid out.
@@ -1647,8 +1657,9 @@ class _NavigationBarTransition extends StatelessWidget {
 ///
 /// This class should never return [KeyedSubtree]s created by
 /// _NavigationBarStaticComponents directly. Since widgets from
-/// _NavigationBarStaticComponents are still present in the widget tree during the
-/// hero transitions, it would cause global key duplications. Instead, return
+/// _NavigationBarStaticComponents are still present in the widget tree during
+/// the hero transitions, it would cause global key duplications. Instead,
+/// return
 /// only the [KeyedSubtree]s' child.
 @immutable
 class _NavigationBarComponentsTransition {
@@ -2220,8 +2231,8 @@ class _NavigationBarComponentsTransition {
   }
 }
 
-/// Navigation bars' hero rect tween that will move between the static bars
-/// but keep a constant size that's the bigger of both navigation bars.
+/// Navigation bars' hero rect tween that will move between the static bars but
+/// keep a constant size that's the bigger of both navigation bars.
 RectTween _linearTranslateWithLargestRectSizeTween(Rect? begin, Rect? end) {
   final Size largestSize = Size(
     math.max(begin!.size.width, end!.size.width),

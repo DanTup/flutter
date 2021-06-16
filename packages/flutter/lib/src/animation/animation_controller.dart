@@ -329,12 +329,10 @@ class AnimationController extends Animation<double>
 
   /// The current value of the animation.
   ///
-  /// Setting this value notifies all the listeners that the value
-  /// changed.
+  /// Setting this value notifies all the listeners that the value changed.
   ///
-  /// Setting this value also stops the controller if it is currently
-  /// running; if this happens, it also notifies all the status
-  /// listeners.
+  /// Setting this value also stops the controller if it is currently running;
+  /// if this happens, it also notifies all the status listeners.
   @override
   double get value => _value;
   late double _value;
@@ -415,7 +413,8 @@ class AnimationController extends Animation<double>
   Duration? get lastElapsedDuration => _lastElapsedDuration;
   Duration? _lastElapsedDuration;
 
-  /// Whether this animation is currently animating in either the forward or reverse direction.
+  /// Whether this animation is currently animating in either the forward or
+  /// reverse direction.
   ///
   /// This is separate from whether it is actively ticking. An animation
   /// controller's ticker might get muted, in which case the animation
@@ -611,8 +610,8 @@ class AnimationController extends Animation<double>
     return _startSimulation(_InterpolationSimulation(_value, target, simulationDuration, curve, scale));
   }
 
-  /// Starts running this animation in the forward direction, and
-  /// restarts the animation when it completes.
+  /// Starts running this animation in the forward direction, and restarts the
+  /// animation when it completes.
   ///
   /// Defaults to repeating between the [lowerBound] and [upperBound] of the
   /// [AnimationController] when no explicit value is set for [min] and [max].

@@ -31,13 +31,13 @@ enum _CupertinoFormSectionType { base, insetGrouped }
 /// An iOS-style form section.
 ///
 /// The base constructor for [CupertinoFormSection] constructs an
-/// edge-to-edge style section which includes an iOS-style header, rows,
-/// the dividers between rows, and borders on top and bottom of the rows.
+/// edge-to-edge style section which includes an iOS-style header, rows, the
+/// dividers between rows, and borders on top and bottom of the rows.
 ///
 /// The [CupertinoFormSection.insetGrouped] constructor creates a round-edged and
 /// padded section that is commonly seen in notched-displays like iPhone X and
-/// beyond. Creates an iOS-style header, rows, and the dividers
-/// between rows. Does not create borders on top and bottom of the rows.
+/// beyond. Creates an iOS-style header, rows, and the dividers between rows.
+/// Does not create borders on top and bottom of the rows.
 ///
 /// The [header] parameter sets the form section header. The section header lies
 /// above the [children] rows, with margins that match the iOS style.
@@ -69,8 +69,8 @@ class CupertinoFormSection extends StatelessWidget {
   /// Creates a section that mimics standard iOS forms.
   ///
   /// The base constructor for [CupertinoFormSection] constructs an
-  /// edge-to-edge style section which includes an iOS-style header,
-  /// rows, the dividers between rows, and borders on top and bottom of the rows.
+  /// edge-to-edge style section which includes an iOS-style header, rows, the
+  /// dividers between rows, and borders on top and bottom of the rows.
   ///
   /// The [header] parameter sets the form section header. The section header
   /// lies above the [children] rows, with margins that match the iOS style.
@@ -115,8 +115,8 @@ class CupertinoFormSection extends StatelessWidget {
   ///
   /// The [CupertinoFormSection.insetGrouped] constructor creates a round-edged and
   /// padded section that is commonly seen in notched-displays like iPhone X and
-  /// beyond. Creates an iOS-style header, rows, and the dividers
-  /// between rows. Does not create borders on top and bottom of the rows.
+  /// beyond. Creates an iOS-style header, rows, and the dividers between rows.
+  /// Does not create borders on top and bottom of the rows.
   ///
   /// The [header] parameter sets the form section header. The section header
   /// lies above the [children] rows, with margins that match the iOS style.

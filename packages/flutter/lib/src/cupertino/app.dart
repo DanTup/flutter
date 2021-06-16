@@ -325,8 +325,8 @@ class CupertinoApp extends StatefulWidget {
   /// Turns on checkerboarding of layers rendered to offscreen bitmaps.
   final bool checkerboardOffscreenLayers;
 
-  /// Turns on an overlay that shows the accessibility information
-  /// reported by the framework.
+  /// Turns on an overlay that shows the accessibility information reported by
+  /// the framework.
   final bool showSemanticsDebugger;
 
   /// {@macro flutter.widgets.widgetsApp.debugShowCheckedModeBanner}

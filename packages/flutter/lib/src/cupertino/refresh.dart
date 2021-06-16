@@ -355,7 +355,8 @@ class CupertinoSliverRefreshControl extends StatefulWidget {
        ),
        super(key: key);
 
-  /// The amount of overscroll the scrollable must be dragged to trigger a reload.
+  /// The amount of overscroll the scrollable must be dragged to trigger a
+  /// reload.
   ///
   /// Must not be null, must be larger than 0.0 and larger than
   /// [refreshIndicatorExtent]. Defaults to 100px when not specified.
@@ -368,7 +369,8 @@ class CupertinoSliverRefreshControl extends StatefulWidget {
   /// [onRefresh]'s [Future] is still running.
   ///
   /// Must not be null and must be positive, but can be 0.0, in which case the
-  /// sliver will start retracting back to 0.0 as soon as the refresh is started.
+  /// sliver will start retracting back to 0.0 as soon as the refresh is
+  /// started.
   /// Defaults to 60px when not specified.
   ///
   /// Must be smaller than [refreshTriggerPullDistance], since the sliver
@@ -378,8 +380,8 @@ class CupertinoSliverRefreshControl extends StatefulWidget {
   /// A builder that's called as this sliver's size changes, and as the state
   /// changes.
   ///
-  /// Can be set to null, in which case nothing will be drawn in the overscrolled
-  /// space.
+  /// Can be set to null, in which case nothing will be drawn in the
+  /// overscrolled space.
   ///
   /// Will not be called when the available space is zero such as before any
   /// overscroll.
@@ -398,7 +400,8 @@ class CupertinoSliverRefreshControl extends StatefulWidget {
   static const double _defaultRefreshTriggerPullDistance = 100.0;
   static const double _defaultRefreshIndicatorExtent = 60.0;
 
-  /// Retrieve the current state of the CupertinoSliverRefreshControl. The same as the
+  /// Retrieve the current state of the CupertinoSliverRefreshControl. The same
+  /// as the
   /// state that gets passed into the [builder] function. Used for testing.
   @visibleForTesting
   static RefreshIndicatorMode state(BuildContext context) {
@@ -409,8 +412,9 @@ class CupertinoSliverRefreshControl extends StatefulWidget {
   /// Builds a refresh indicator that reflects the standard iOS pull-to-refresh
   /// behavior. Specifically, this entails presenting an activity indicator that
   /// changes depending on the current refreshState. As the user initially drags
-  /// down, the indicator will gradually reveal individual ticks until the refresh
-  /// becomes armed. At this point, the animated activity indicator will begin rotating.
+  /// down, the indicator will gradually reveal individual ticks until the
+  /// refresh becomes armed. At this point, the animated activity indicator will
+  /// begin rotating.
   /// Once the refresh has completed, the activity indicator shrinks away as the
   /// space allocation animates back to closed.
   static Widget buildRefreshIndicator(

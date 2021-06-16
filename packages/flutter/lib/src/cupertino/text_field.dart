@@ -68,7 +68,8 @@ const CupertinoDynamicColor _kClearButtonColor = CupertinoDynamicColor.withBrigh
 // throughout the codebase.
 const int _iOSHorizontalCursorOffsetPixels = -2;
 
-/// Visibility of text field overlays based on the state of the current text entry.
+/// Visibility of text field overlays based on the state of the current text
+/// entry.
 ///
 /// Used to toggle the visibility behavior of the optional decorating widgets
 /// surrounding the [EditableText] such as the clear text button.
@@ -84,8 +85,8 @@ enum OverlayVisibilityMode {
 
   /// Overlay will only appear when the current text entry is empty.
   ///
-  /// This also includes not having prefilled text that the user did not type
-  /// in manually. Texts in placeholders are ignored.
+  /// This also includes not having prefilled text that the user did not type in
+  /// manually. Texts in placeholders are ignored.
   notEditing,
 
   /// Always show the overlay regardless of the text entry state.
@@ -127,8 +128,8 @@ class _CupertinoTextFieldSelectionGestureDetectorBuilder extends TextSelectionGe
 
 /// An iOS-style text field.
 ///
-/// A text field lets the user enter text, either with a hardware keyboard or with
-/// an onscreen keyboard.
+/// A text field lets the user enter text, either with a hardware keyboard or
+/// with an onscreen keyboard.
 ///
 /// This widget corresponds to both a `UITextField` and an editable `UITextView`
 /// on iOS.

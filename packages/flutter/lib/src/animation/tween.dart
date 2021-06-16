@@ -306,7 +306,8 @@ class Tween<T extends Object?> extends Animatable<T> {
     return (begin as dynamic) + ((end as dynamic) - (begin as dynamic)) * t as T;
   }
 
-  /// Returns the interpolated value for the current value of the given animation.
+  /// Returns the interpolated value for the current value of the given
+  /// animation.
   ///
   /// This method returns `begin` and `end` when the animation values are 0.0 or
   /// 1.0, respectively.
@@ -419,9 +420,8 @@ class RectTween extends Tween<Rect?> {
 /// An interpolation between two integers that rounds.
 ///
 /// This class specializes the interpolation of [Tween<int>] to be
-/// appropriate for integers by interpolating between the given begin
-/// and end values and then rounding the result to the nearest
-/// integer.
+/// appropriate for integers by interpolating between the given begin and end
+/// values and then rounding the result to the nearest integer.
 ///
 /// This is the closest approximation to a linear tween that is possible with an
 /// integer. Compare to [StepTween] and [Tween<double>].

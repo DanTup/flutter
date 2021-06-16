@@ -7,10 +7,12 @@ import 'package:flutter/foundation.dart';
 
 import 'animation.dart';
 
-/// A mixin that helps listen to another object only when this object has registered listeners.
+/// A mixin that helps listen to another object only when this object has
+/// registered listeners.
 ///
 /// This mixin provides implementations of [didRegisterListener] and [didUnregisterListener],
-/// and therefore can be used in conjunction with mixins that require these methods,
+/// and therefore can be used in conjunction with mixins that require these
+/// methods,
 /// [AnimationLocalListenersMixin] and [AnimationLocalStatusListenersMixin].
 mixin AnimationLazyListenerMixin {
   int _listenerCounter = 0;
@@ -61,7 +63,8 @@ mixin AnimationLazyListenerMixin {
 /// with a dispose contract.
 ///
 /// This mixin provides implementations of [didRegisterListener] and [didUnregisterListener],
-/// and therefore can be used in conjunction with mixins that require these methods,
+/// and therefore can be used in conjunction with mixins that require these
+/// methods,
 /// [AnimationLocalListenersMixin] and [AnimationLocalStatusListenersMixin].
 mixin AnimationEagerListenerMixin {
   /// This implementation ignores listener registrations.

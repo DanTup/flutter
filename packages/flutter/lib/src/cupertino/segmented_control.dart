@@ -32,8 +32,8 @@ const Duration _kFadeDuration = Duration(milliseconds: 165);
 /// [Map] of [children]. The type T is the type of the keys used
 /// to identify each widget and determine which widget is selected. As
 /// required by the [Map] class, keys must be of consistent types
-/// and must be comparable. The ordering of the keys will determine the order
-/// of the widgets in the segmented control.
+/// and must be comparable. The ordering of the keys will determine the order of
+/// the widgets in the segmented control.
 ///
 /// When the state of the segmented control changes, the widget calls the
 /// [onValueChanged] callback. The map key associated with the newly selected
@@ -46,8 +46,8 @@ const Duration _kFadeDuration = Duration(milliseconds: 165);
 /// The height of the segmented control is determined by the height of the
 /// tallest widget provided as a value in the [Map] of [children].
 /// The width of each child in the segmented control will be equal to the width
-/// of widest child, unless the combined width of the children is wider than
-/// the available horizontal space. In this case, the available horizontal space
+/// of widest child, unless the combined width of the children is wider than the
+/// available horizontal space. In this case, the available horizontal space
 /// is divided by the number of provided [children] to determine the width of
 /// each widget. The selection area for each of the widgets in the [Map] of
 /// [children] will then be expanded to fill the calculated space, so each
@@ -98,8 +98,8 @@ class CupertinoSegmentedControl<T extends Object> extends StatefulWidget {
        ),
        super(key: key);
 
-  /// The identifying keys and corresponding widget values in the
-  /// segmented control.
+  /// The identifying keys and corresponding widget values in the segmented
+  /// control.
   ///
   /// The map must have more than one entry.
   /// This attribute must be an ordered [Map] such as a [LinkedHashMap].
@@ -115,8 +115,8 @@ class CupertinoSegmentedControl<T extends Object> extends StatefulWidget {
   ///
   /// This attribute must not be null.
   ///
-  /// The segmented control passes the newly selected widget's associated key
-  /// to the callback but does not actually change state until the parent
+  /// The segmented control passes the newly selected widget's associated key to
+  /// the callback but does not actually change state until the parent
   /// widget rebuilds the segmented control with the new [groupValue].
   ///
   /// The callback provided to [onValueChanged] should update the state of
@@ -164,8 +164,8 @@ class CupertinoSegmentedControl<T extends Object> extends StatefulWidget {
   /// Defaults to [CupertinoTheme]'s `primaryContrastingColor` if null.
   final Color? unselectedColor;
 
-  /// The color used to fill the background of the selected widget and as the text
-  /// color of unselected widgets.
+  /// The color used to fill the background of the selected widget and as the
+  /// text color of unselected widgets.
   ///
   /// Defaults to [CupertinoTheme]'s `primaryColor` if null.
   final Color? selectedColor;

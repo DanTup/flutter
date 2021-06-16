@@ -144,7 +144,8 @@ class _DatePickerLayoutDelegate extends MultiChildLayoutDelegate {
 ///    of the iOS-style date picker.
 ///  * [CupertinoPicker], the class that implements a content agnostic spinner UI.
 enum CupertinoDatePickerMode {
-  /// Mode that shows the date in hour, minute, and (optional) an AM/PM designation.
+  /// Mode that shows the date in hour, minute, and (optional) an AM/PM
+  /// designation.
   /// The AM/PM designation is shown only if [CupertinoDatePicker] does not use 24h format.
   /// Column order is subject to internationalization.
   ///
@@ -156,8 +157,8 @@ enum CupertinoDatePickerMode {
   ///
   /// Example: ` July | 13 | 2012 `.
   date,
-  /// Mode that shows the date as day of the week, month, day of month and
-  /// the time in hour, minute, and (optional) an AM/PM designation.
+  /// Mode that shows the date as day of the week, month, day of month and the
+  /// time in hour, minute, and (optional) an AM/PM designation.
   /// The AM/PM designation is shown only if [CupertinoDatePicker] does not use 24h format.
   /// Column order is subject to internationalization.
   ///
@@ -348,7 +349,8 @@ class CupertinoDatePicker extends StatefulWidget {
   /// [CupertinoDatePickerMode.date] mode. Null if there's no limit.
   final int? maximumYear;
 
-  /// The granularity of the minutes spinner, if it is shown in the current mode.
+  /// The granularity of the minutes spinner, if it is shown in the current
+  /// mode.
   /// Must be an integer factor of 60.
   final int minuteInterval;
 
@@ -1459,12 +1461,14 @@ enum CupertinoTimerPickerMode {
 
 /// A countdown timer picker in iOS style.
 ///
-/// This picker shows a countdown duration with hour, minute and second spinners.
+/// This picker shows a countdown duration with hour, minute and second
+/// spinners.
 /// The duration is bound between 0 and 23 hours 59 minutes 59 seconds.
 ///
 /// There are several modes of the timer picker listed in [CupertinoTimerPickerMode].
 ///
-/// The picker has a fixed size of 320 x 216, in logical pixels, with the exception
+/// The picker has a fixed size of 320 x 216, in logical pixels, with the
+/// exception
 /// of [CupertinoTimerPickerMode.hms], which is 330 x 216. If the parent widget
 /// provides more space than it needs, the picker will position itself according
 /// to its [alignment] property.
