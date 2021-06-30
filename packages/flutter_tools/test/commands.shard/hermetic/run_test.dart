@@ -8,6 +8,7 @@ import 'dart:async';
 
 import 'package:file/file.dart';
 import 'package:file/memory.dart';
+import 'package:flutter_tools/src/android/android_device.dart';
 import 'package:flutter_tools/src/application_package.dart';
 import 'package:flutter_tools/src/artifacts.dart';
 import 'package:flutter_tools/src/base/common.dart';
@@ -17,6 +18,7 @@ import 'package:flutter_tools/src/base/logger.dart';
 import 'package:flutter_tools/src/base/user_messages.dart';
 import 'package:flutter_tools/src/build_info.dart';
 import 'package:flutter_tools/src/cache.dart';
+import 'package:flutter_tools/src/commands/daemon.dart';
 import 'package:flutter_tools/src/commands/run.dart';
 import 'package:flutter_tools/src/devfs.dart';
 import 'package:flutter_tools/src/device.dart';
@@ -286,6 +288,35 @@ void main() {
         ProcessManager: () => FakeProcessManager.any(),
         Usage: () => usage,
       });
+
+      testUsingContext('passes --device-user in --machine mode', () async {
+        fs.file('pubspec.yaml').createSync();
+        fs.file('.packages').writeAsStringSync('\n');
+        fs.file('lib/main.dart').createSync(recursive: true);
+        final FakeAndroidDevice device = FakeAndroidDevice();
+
+        mockDeviceManager
+          ..devices = <Device>[device]
+          ..targetDevices = <Device>[device];
+
+        final RunCommand command = RunCommand();
+        await createTestCommandRunner(command).run(<String>[
+          'run',
+          '--no-pub',
+          '--machine',
+          '--device-user',
+          '10',
+        ]);
+
+        expect(device.userIdentifier, '10');
+      }, overrides: <Type, Generator>{
+        FileSystem: () => fs,
+        ProcessManager: () => FakeProcessManager.any(),
+        DeviceManager: () => mockDeviceManager,
+        Stdio: () => FakeStdio(),
+        Cache: () => Cache.test(processManager: FakeProcessManager.any()),
+        Logger: () => AppRunLogger(parent: BufferLogger.test()),
+      });
     });
 
     testUsingContext('should only request artifacts corresponding to connected devices', () async {
@@ -455,6 +486,9 @@ class FakeDeviceManager extends Fake implements DeviceManager {
   }
 
   @override
+  List<DeviceDiscovery> get deviceDiscoverers => <DeviceDiscovery>[];
+
+  @override
   Future<List<Device>> findTargetDevices(FlutterProject flutterProject, {Duration timeout}) async {
     return targetDevices;
   }
@@ -466,6 +500,37 @@ class TestRunCommand extends RunCommand {
   // ignore: must_call_super
   Future<void> validateCommand() async {
     devices = await globals.deviceManager.getDevices();
+  }
+}
+
+class FakeAndroidDevice extends FakeDevice implements AndroidDevice {
+  String userIdentifier;
+
+  @override
+  Future<LaunchResult> startApp(
+    ApplicationPackage package, {
+    String mainPath,
+    String route,
+    DebuggingOptions debuggingOptions,
+    Map<String, dynamic> platformArgs,
+    bool prebuiltApplication = false,
+    bool usesTerminalUi = true,
+    bool ipv6 = false,
+    String userIdentifier,
+  }) async {
+    this.userIdentifier = userIdentifier;
+
+    return super.startApp(
+      package,
+      mainPath: mainPath,
+      route: route,
+      debuggingOptions: debuggingOptions,
+      platformArgs: platformArgs,
+      prebuiltApplication: prebuiltApplication,
+      usesTerminalUi: usesTerminalUi,
+      ipv6: ipv6,
+      userIdentifier: userIdentifier,
+    );
   }
 }
 
@@ -493,13 +558,16 @@ class FakeDevice extends Fake implements Device {
   Future<bool> get isLocalEmulator => Future<bool>.value(_isLocalEmulator);
 
   @override
-  bool supportsRuntimeMode(BuildMode mode) => true;
+  Future<bool> supportsRuntimeMode(BuildMode mode) async => true;
 
   @override
   bool supportsHotReload = false;
 
   @override
   bool get supportsFastStart => false;
+
+  @override
+  bool get supportsHotRestart => true;
 
   bool supported = true;
 
@@ -575,6 +643,9 @@ class FakeDevice extends Fake implements Device {
     }
     return null;
   }
+
+  @override
+  Future<void> dispose() async {}
 }
 
 class FakeApplicationPackageFactory extends Fake implements ApplicationPackageFactory {

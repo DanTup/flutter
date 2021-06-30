@@ -560,6 +560,7 @@ class RunCommand extends RunCommandBase {
           packagesFilePath: globalResults['packages'] as String,
           dillOutputPath: stringArg('output-dill'),
           ipv6: ipv6,
+          userIdentifier: userIdentifier,
           machine: true,
         );
       } on Exception catch (error) {

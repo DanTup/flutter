@@ -454,6 +454,7 @@ class AppDomain extends Domain {
     String dillOutputPath,
     bool ipv6 = false,
     String isolateFilter,
+    String userIdentifier,
     bool machine = true,
   }) async {
     if (!await device.supportsRuntimeMode(options.buildInfo.mode)) {
@@ -473,6 +474,7 @@ class AppDomain extends Domain {
       target: target,
       buildInfo: options.buildInfo,
       platform: globals.platform,
+      userIdentifier: userIdentifier
     );
 
     ResidentRunner runner;
