@@ -25,10 +25,12 @@ class FlutterTestDebugAdapter extends DartDebugAdapter<FlutterLaunchRequestArgum
     required this.fileSystem,
     required this.platform,
     super.ipv6,
-    super.enableDds,
+    // Enabling DDS causes integration tests to not start after calling "resume".
+    // ignore: avoid_unused_constructor_parameters
+    required bool enableDds,
     super.enableAuthCodes,
     super.logger,
-  });
+  }) : super(enableDds: false);
 
   FileSystem fileSystem;
   Platform platform;
