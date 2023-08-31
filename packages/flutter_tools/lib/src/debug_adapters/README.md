@@ -23,7 +23,8 @@ Arguments common to both `launchRequest` and `attachRequest` are:
 
 - `bool? debugExternalPackageLibraries` - whether to enable debugging for packages that are not inside the current workspace (if not supplied, defaults to `true`)
 - `bool? debugSdkLibraries` - whether to enable debugging for SDK libraries (if not supplied, defaults to `true`)
-- `bool? evaluateGettersInDebugViews` - whether to evaluate getters in expression evaluation requests (inc. hovers/watch windows) (if not supplied, defaults to `false`)
+- `bool? showGettersInDebugViews` - whether to include getters in Variables and Evaluation responses (inc. hovers/watch windows) (if not supplied, defaults to `false`)
+- `bool? evaluateGettersInDebugViews` - whether to eagerly evaluate getters in Variables and Evaluation responses (inc. hovers/watch windows) without needing user action. Implies `showGettersInDebugViews=true` (if not supplied, defaults to `false`)
 - `bool? evaluateToStringInDebugViews` - whether to invoke `toString()` in expression evaluation requests (inc. hovers/watch windows) (if not supplied, defaults to `false`)
 - `bool? sendLogsToClient` - used to proxy all VM Service traffic back to the client in custom `dart.log` events (has performance implications, intended for troubleshooting) (if not supplied, defaults to `false`)
 - `List<String>? additionalProjectPaths` - paths of any projects (outside of `cwd`) that are open in the users workspace

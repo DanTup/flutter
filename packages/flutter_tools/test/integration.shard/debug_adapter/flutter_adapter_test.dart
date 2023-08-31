@@ -4,6 +4,7 @@
 
 import 'dart:async';
 
+import 'package:collection/collection.dart';
 import 'package:dds/dap.dart';
 import 'package:file/file.dart';
 import 'package:flutter_tools/src/cache.dart';
@@ -11,6 +12,7 @@ import 'package:flutter_tools/src/convert.dart';
 import 'package:flutter_tools/src/globals.dart' as globals;
 
 import '../../src/common.dart';
+import '../../src/context.dart';
 import '../test_data/basic_project.dart';
 import '../test_data/compile_error_project.dart';
 import '../test_data/project.dart';
@@ -73,6 +75,88 @@ void main() {
         allowExtras: true,
       );
     });
+
+    group('expression evaluation', () {
+      late DapTestClient client;
+      late int threadId;
+
+      /// Starts the test project and hits a breakpoint, ready to evaluate expressions.
+      Future<void> startProjectAndHitBreakpoint({
+        bool showGettersInDebugViews = false,
+        bool evaluateGettersInDebugViews = false,
+      }) async {
+        client = dap.client;
+        final BasicProject project = BasicProject();
+        await project.setUpIn(tempDir);
+        final String breakpointFilePath = globals.fs.path.join(project.dir.path, 'lib', 'main.dart');
+
+        // Launch and hit breakpoint.
+        await Future.wait(<Future<Object?>>[
+          client.initialize(),
+          client.setBreakpoint(breakpointFilePath, project.buildMethodBreakpointLine),
+          dap.client.stoppedEvents.first.then((StoppedEventBody event) => threadId = event.threadId!),
+          client.launch(
+            cwd: project.dir.path,
+            toolArgs: <String>['-d', 'flutter-tester'],
+            showGettersInDebugViews: showGettersInDebugViews,
+            evaluateGettersInDebugViews: evaluateGettersInDebugViews,
+          ),
+        ], eagerError: true);
+      }
+
+      /// Evalutes "this" where the debugger is currently paused.
+      ///
+      /// Returns the set of "variables" (fields) from the result.
+      Future<VariablesResponseBody> evaluateThisExpression() async {
+        // Evaluate
+        final int topFrameId = await client.getTopFrameId(threadId);
+        final Response evalResponse = await client.evaluate('this', frameId: topFrameId);
+        expect(evalResponse.success, isTrue);
+        expect(evalResponse.command, equals('evaluate'));
+        final EvaluateResponseBody body = EvaluateResponseBody.fromJson(evalResponse.body! as Map<String, Object?>);
+        expect(body.variablesReference, isPositive);
+        return  client.getValidVariables(body.variablesReference);
+      }
+
+      testUsingContext('does not include getters if not requested', () async {
+        await startProjectAndHitBreakpoint();
+        final VariablesResponseBody variables = await evaluateThisExpression();
+
+        // runtimeType is a getter
+        final Variable? runtimeTypeVariable = variables.variables
+            .singleWhereOrNull((Variable variable) => variable.name == 'runtimeType');
+
+        // We didn't request getters, so we shouldn't find it.
+        expect(runtimeTypeVariable, isNull);
+      });
+
+      testUsingContext('includes lazy getters if showGettersInDebugViews=true', () async {
+        await startProjectAndHitBreakpoint(showGettersInDebugViews: true);
+        final VariablesResponseBody variables = await evaluateThisExpression();
+
+        // runtimeType is a getter
+        final Variable runtimeTypeVariable = variables.variables
+            .singleWhere((Variable variable) => variable.name == 'runtimeType');
+
+        // For a lazy variable, we expect an empty string for the value and a
+        // variablesReference.
+        expect(runtimeTypeVariable.value, '');
+        expect(runtimeTypeVariable.variablesReference, isPositive);
+      });
+
+      testUsingContext('includes getters eagerly if evaluateGettersInDebugViews=true', () async {
+        await startProjectAndHitBreakpoint(evaluateGettersInDebugViews: true);
+        final VariablesResponseBody variables = await evaluateThisExpression();
+
+        // runtimeType is a getter
+        final Variable runtimeTypeVariable = variables.variables
+            .singleWhere((Variable variable) => variable.name == 'runtimeType');
+
+        // For an eager variable, we expect a value.
+        expect(runtimeTypeVariable.value, 'Type (MyApp)');
+      });
+    });
+
 
     testWithoutContext('logs to client when sendLogsToClient=true', () async {
       final BasicProject project = BasicProject();

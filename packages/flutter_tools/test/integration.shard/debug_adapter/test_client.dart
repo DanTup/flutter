@@ -6,6 +6,7 @@ import 'dart:async';
 
 import 'package:dds/dap.dart';
 import 'package:flutter_tools/src/debug_adapters/flutter_adapter_args.dart';
+import 'package:test/expect.dart';
 
 import 'test_server.dart';
 
@@ -72,6 +73,25 @@ class DapTestClient {
   /// Sends a custom request to the server and waits for a response.
   Future<Response> custom(String name, [Object? args]) async {
     return sendRequest(args, overrideCommand: name);
+  }
+
+  /// Sends an evaluate request for the given [expression], optionally for a
+  /// specific [frameId].
+  ///
+  /// Returns a Future that completes when the server returns a corresponding
+  /// response.
+  Future<Response> evaluate(
+    String expression, {
+    int? frameId,
+    String? context,
+    ValueFormat? format,
+  }) {
+    return sendRequest(EvaluateArguments(
+      expression: expression,
+      frameId: frameId,
+      context: context,
+      format: format,
+    ));
   }
 
   /// Returns a Future that completes with the next [event] event.
@@ -158,6 +178,7 @@ class DapTestClient {
     bool? allowAnsiColorOutput,
     bool? debugSdkLibraries,
     bool? debugExternalPackageLibraries,
+    bool? showGettersInDebugViews,
     bool? evaluateGettersInDebugViews,
     bool? evaluateToStringInDebugViews,
     bool sendLogsToClient = false,
@@ -173,6 +194,7 @@ class DapTestClient {
         allowAnsiColorOutput: allowAnsiColorOutput,
         debugSdkLibraries: debugSdkLibraries,
         debugExternalPackageLibraries: debugExternalPackageLibraries,
+        showGettersInDebugViews: showGettersInDebugViews,
         evaluateGettersInDebugViews: evaluateGettersInDebugViews,
         evaluateToStringInDebugViews: evaluateToStringInDebugViews,
         // When running out of process, VM Service traffic won't be available
@@ -194,6 +216,7 @@ class DapTestClient {
     List<String>? additionalProjectPaths,
     bool? debugSdkLibraries,
     bool? debugExternalPackageLibraries,
+    bool? showGettersInDebugViews,
     bool? evaluateGettersInDebugViews,
     bool? evaluateToStringInDebugViews,
   }) {
@@ -205,6 +228,7 @@ class DapTestClient {
         additionalProjectPaths: additionalProjectPaths,
         debugSdkLibraries: debugSdkLibraries,
         debugExternalPackageLibraries: debugExternalPackageLibraries,
+        showGettersInDebugViews: showGettersInDebugViews,
         evaluateGettersInDebugViews: evaluateGettersInDebugViews,
         evaluateToStringInDebugViews: evaluateToStringInDebugViews,
         // When running out of process, VM Service traffic won't be available
@@ -440,4 +464,76 @@ extension DapTestClientExtension on DapTestClient {
     );
   }
 
+  /// Sends a request for child variables (fields/list elements/etc.) for the
+  /// variable with reference [variablesReference].
+  ///
+  /// If [start] and/or [count] are supplied, only a slice of the variables will
+  /// be returned. This is used to allow the client to page through large Lists
+  /// or Maps without needing all of the data immediately.
+  ///
+  /// Returns a Future that completes when the server returns a corresponding
+  /// response.
+  Future<Response> variables(
+    int variablesReference, {
+    int? start,
+    int? count,
+    ValueFormat? format,
+  }) {
+    return sendRequest(VariablesArguments(
+      variablesReference: variablesReference,
+      start: start,
+      count: count,
+      format: format,
+    ));
+  }
+
+  Future<int> getTopFrameId(
+    int threadId,
+  ) async {
+    final StackTraceResponseBody stack = await getValidStack(threadId, startFrame: 0, numFrames: 1);
+    return stack.stackFrames.first.id;
+  }
+
+  /// Fetches a stack trace and asserts it was a valid response.
+  Future<StackTraceResponseBody> getValidStack(int threadId,
+      {required int startFrame, required int numFrames}) async {
+    final Response response = await stackTrace(threadId,
+        startFrame: startFrame, numFrames: numFrames);
+    expect(response.success, isTrue);
+    expect(response.command, equals('stackTrace'));
+    return StackTraceResponseBody.fromJson(
+        response.body! as Map<String, Object?>);
+  }
+
+  /// Requests variables by reference and asserts a valid response.
+  Future<VariablesResponseBody> getValidVariables(
+    int variablesReference, {
+    int? start,
+    int? count,
+    ValueFormat? format,
+  }) async {
+    final Response response = await variables(
+      variablesReference,
+      start: start,
+      count: count,
+      format: format,
+    );
+    expect(response.success, isTrue);
+    expect(response.command, equals('variables'));
+    return VariablesResponseBody.fromJson(
+        response.body! as Map<String, Object?>);
+  }
+
+  /// Sends a stackTrace request to the server to request the call stack for a
+  /// given thread.
+  ///
+  /// If [startFrame] and/or [numFrames] are supplied, only a slice of the
+  /// frames will be returned.
+  ///
+  /// Returns a Future that completes when the server returns a corresponding
+  /// response.
+  Future<Response> stackTrace(int threadId,
+          {int? startFrame, int? numFrames}) =>
+      sendRequest(StackTraceArguments(
+          threadId: threadId, startFrame: startFrame, levels: numFrames));
 }
