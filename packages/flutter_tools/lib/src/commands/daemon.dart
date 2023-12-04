@@ -24,6 +24,7 @@ import '../device_port_forwarder.dart';
 import '../emulator.dart';
 import '../features.dart';
 import '../globals.dart' as globals;
+import '../globals.dart';
 import '../project.dart';
 import '../proxied_devices/debounce_data_stream.dart';
 import '../proxied_devices/file_transfer.dart';
@@ -853,6 +854,8 @@ class DeviceDomain extends Domain {
     // Use the device manager discovery so that client provided device types
     // are usable via the daemon protocol.
     globals.deviceManager!.deviceDiscoverers.forEach(addDeviceDiscoverer);
+
+    Timer(const Duration(seconds: 1), () => enable(<String, Object?>{}));
   }
 
   /// An incrementing number used to generate unique ids.
@@ -862,13 +865,20 @@ class DeviceDomain extends Domain {
 
   void addDeviceDiscoverer(DeviceDiscovery discoverer) {
     if (!discoverer.supportsPlatform) {
+      printStatus(
+          '########## Skipping discoverer "${discoverer.runtimeType}" because it is not supported on this platform');
       return;
     }
 
     if (discoverer is PollingDeviceDiscovery) {
+      printStatus('########## Adding discoverer "${discoverer.runtimeType}"');
+
       _discoverers.add(discoverer);
       discoverer.onAdded.listen(_onDeviceEvent('device.added'));
       discoverer.onRemoved.listen(_onDeviceEvent('device.removed'));
+    } else {
+      printStatus(
+          '########## Ignoring discoverer "${discoverer.runtimeType}" because it is not polling');
     }
   }
 
@@ -911,6 +921,7 @@ class DeviceDomain extends Domain {
   /// Enable device events.
   Future<void> enable(Map<String, Object?> args) async {
     for (final PollingDeviceDiscovery discoverer in _discoverers) {
+      printStatus('########## Starting to poll "${discoverer.runtimeType}"');
       discoverer.startPolling();
     }
   }
