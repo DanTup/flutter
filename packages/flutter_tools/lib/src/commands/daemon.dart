@@ -220,7 +220,9 @@ class Daemon {
 
       final String prefix = method.substring(0, method.indexOf('.'));
       final String name = method.substring(method.indexOf('.') + 1);
+      printStatus('########## Handling a request fore $prefix.$name');
       if (_domainMap[prefix] == null) {
+        printStatus('########## no domain for method: $method');
         throw DaemonException('no domain for method: $method');
       }
 
@@ -274,10 +276,13 @@ abstract class Domain {
   void handleCommand(String command, Object id, Map<String, Object?> args, Stream<List<int>>? binary) {
     Future<Object?>.sync(() {
       if (_handlers.containsKey(command)) {
+        printStatus('########## Handling $command');
         return _handlers[command]!(args);
       } else if (_handlersWithBinary.containsKey(command)) {
+        printStatus('########## Handling $command (binary)');
         return _handlersWithBinary[command]!(args, binary);
       }
+        printStatus('########## Failed to handle $command (handlers are ${_handlers.keys.join(', ')})');
       throw DaemonException('command not understood: $name.$command');
     }).then<Object?>((Object? result) {
       daemon.connection.sendResponse(id, _toJsonable(result));
@@ -338,6 +343,7 @@ class DaemonDomain extends Domain {
     registerHandler('getSupportedPlatforms', getSupportedPlatforms);
     registerHandler('setNotifyVerbose', setNotifyVerbose);
 
+    printStatus('sending daemon.connected');
     sendEvent(
       'daemon.connected',
       <String, Object?>{
@@ -415,11 +421,16 @@ class DaemonDomain extends Domain {
   /// as whether command line tools are installed or whether the host platform
   /// is correct.
   Future<Map<String, Object>> getSupportedPlatforms(Map<String, Object?> args) async {
+    printStatus('########## getSupportedPlatforms: 1');
     final String? projectRoot = _getStringArg(args, 'projectRoot', required: true);
+    printStatus('########## getSupportedPlatforms: 2');
     final List<String> result = <String>[];
     try {
+      printStatus('########## getSupportedPlatforms: 3');
       final FlutterProject flutterProject = FlutterProject.fromDirectory(globals.fs.directory(projectRoot));
+      printStatus('########## getSupportedPlatforms: 4');
       final Set<SupportedPlatform> supportedPlatforms = flutterProject.getSupportedPlatforms().toSet();
+      printStatus('########## getSupportedPlatforms: 5');
       if (featureFlags.isLinuxEnabled && supportedPlatforms.contains(SupportedPlatform.linux)) {
         result.add('linux');
       }
@@ -444,10 +455,12 @@ class DaemonDomain extends Domain {
       if (featureFlags.areCustomDevicesEnabled) {
         result.add('custom');
       }
+      printStatus('########## Returning from getSupportedPlatforms');
       return <String, Object>{
         'platforms': result,
       };
     } on Exception catch (err, stackTrace) {
+      printStatus('########## Failed: $err');
       sendEvent('log', <String, Object?>{
         'log': 'Failed to parse project metadata',
         'stackTrace': stackTrace.toString(),
