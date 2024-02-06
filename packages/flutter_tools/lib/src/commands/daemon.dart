@@ -170,6 +170,7 @@ class Daemon {
     _commandSubscription = connection.incomingCommands.listen(
       _handleRequest,
       onDone: () {
+          printStatus('########## Daemon _commandSubscription onDone');
         shutdown();
         if (!_onExitCompleter.isCompleted) {
           _onExitCompleter.complete(0);
@@ -202,6 +203,7 @@ class Daemon {
   Future<int> get onExit => _onExitCompleter.future;
 
   void _handleRequest(DaemonMessage request) {
+    printStatus('########## _handleRequest');
     // {id, method, params}
 
     // [id] is an opaque type to us.

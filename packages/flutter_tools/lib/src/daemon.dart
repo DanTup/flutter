@@ -12,6 +12,7 @@ import 'base/io.dart';
 import 'base/logger.dart';
 import 'base/utils.dart';
 import 'convert.dart';
+import 'globals.dart';
 
 /// A single message passed through the [DaemonConnection].
 class DaemonMessage {
@@ -246,6 +247,7 @@ class DaemonConnection {
     _commandSubscription = daemonStreams.inputStream.listen(
       _handleMessage,
       onError: (Object error, StackTrace stackTrace) {
+        printStatus('ERROR: $error\n$stackTrace');
         // We have to listen for on error otherwise the error on the socket
         // will end up in the Zone error handler.
         // Do nothing here and let the stream close handlers handle shutting
@@ -332,8 +334,11 @@ class DaemonConnection {
   /// {"event": <String>. "params": <optional, Object?>}
   void _handleMessage(DaemonMessage message) {
     final Map<String, Object?> data = message.data;
+    printStatus('########## DaemonConnection._handleMessage 1');
     if (data['id'] != null) {
+    printStatus('########## DaemonConnection._handleMessage 2');
       if (data['method'] == null) {
+    printStatus('########## DaemonConnection._handleMessage 3');
         // This is a response to previously sent request.
         final String id = data['id']! as String;
         if (data['error'] != null) {
@@ -348,6 +353,7 @@ class DaemonConnection {
           _outgoingRequestCompleters.remove(id)?.complete(result);
         }
       } else {
+        printStatus('########## DaemonConnection._handleMessage 4 (adding message)');
         _incomingCommands.add(message);
       }
     } else if (data['event'] != null) {
