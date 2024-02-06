@@ -167,10 +167,10 @@ class Daemon {
     registerDomain(proxyDomain = ProxyDomain(this));
 
     // Start listening.
+    printStatus('##### Listening to connection.incomingCommands');
     _commandSubscription = connection.incomingCommands.listen(
       _handleRequest,
       onDone: () {
-          printStatus('########## Daemon _commandSubscription onDone');
         shutdown();
         if (!_onExitCompleter.isCompleted) {
           _onExitCompleter.complete(0);
@@ -203,7 +203,6 @@ class Daemon {
   Future<int> get onExit => _onExitCompleter.future;
 
   void _handleRequest(DaemonMessage request) {
-    printStatus('########## _handleRequest');
     // {id, method, params}
 
     // [id] is an opaque type to us.
@@ -222,9 +221,7 @@ class Daemon {
 
       final String prefix = method.substring(0, method.indexOf('.'));
       final String name = method.substring(method.indexOf('.') + 1);
-      printStatus('########## Handling a request fore $prefix.$name');
       if (_domainMap[prefix] == null) {
-        printStatus('########## no domain for method: $method');
         throw DaemonException('no domain for method: $method');
       }
 
@@ -261,6 +258,7 @@ abstract class Domain {
   final Map<String, CommandHandlerWithBinary> _handlersWithBinary = <String, CommandHandlerWithBinary>{};
 
   void registerHandler(String name, CommandHandler handler) {
+    printStatus('##### registering handler for ${this.name}.$name');
     assert(!_handlers.containsKey(name));
     assert(!_handlersWithBinary.containsKey(name));
     _handlers[name] = handler;
@@ -278,13 +276,10 @@ abstract class Domain {
   void handleCommand(String command, Object id, Map<String, Object?> args, Stream<List<int>>? binary) {
     Future<Object?>.sync(() {
       if (_handlers.containsKey(command)) {
-        printStatus('########## Handling $command');
         return _handlers[command]!(args);
       } else if (_handlersWithBinary.containsKey(command)) {
-        printStatus('########## Handling $command (binary)');
         return _handlersWithBinary[command]!(args, binary);
       }
-        printStatus('########## Failed to handle $command (handlers are ${_handlers.keys.join(', ')})');
       throw DaemonException('command not understood: $name.$command');
     }).then<Object?>((Object? result) {
       daemon.connection.sendResponse(id, _toJsonable(result));
@@ -345,7 +340,7 @@ class DaemonDomain extends Domain {
     registerHandler('getSupportedPlatforms', getSupportedPlatforms);
     registerHandler('setNotifyVerbose', setNotifyVerbose);
 
-    printStatus('sending daemon.connected');
+    printStatus('##### sending daemon.connected');
     sendEvent(
       'daemon.connected',
       <String, Object?>{
@@ -423,16 +418,11 @@ class DaemonDomain extends Domain {
   /// as whether command line tools are installed or whether the host platform
   /// is correct.
   Future<Map<String, Object>> getSupportedPlatforms(Map<String, Object?> args) async {
-    printStatus('########## getSupportedPlatforms: 1');
     final String? projectRoot = _getStringArg(args, 'projectRoot', required: true);
-    printStatus('########## getSupportedPlatforms: 2');
     final List<String> result = <String>[];
     try {
-      printStatus('########## getSupportedPlatforms: 3');
       final FlutterProject flutterProject = FlutterProject.fromDirectory(globals.fs.directory(projectRoot));
-      printStatus('########## getSupportedPlatforms: 4');
       final Set<SupportedPlatform> supportedPlatforms = flutterProject.getSupportedPlatforms().toSet();
-      printStatus('########## getSupportedPlatforms: 5');
       if (featureFlags.isLinuxEnabled && supportedPlatforms.contains(SupportedPlatform.linux)) {
         result.add('linux');
       }
@@ -457,12 +447,10 @@ class DaemonDomain extends Domain {
       if (featureFlags.areCustomDevicesEnabled) {
         result.add('custom');
       }
-      printStatus('########## Returning from getSupportedPlatforms');
       return <String, Object>{
         'platforms': result,
       };
     } on Exception catch (err, stackTrace) {
-      printStatus('########## Failed: $err');
       sendEvent('log', <String, Object?>{
         'log': 'Failed to parse project metadata',
         'stackTrace': stackTrace.toString(),
@@ -869,8 +857,6 @@ class DeviceDomain extends Domain {
     // Use the device manager discovery so that client provided device types
     // are usable via the daemon protocol.
     globals.deviceManager!.deviceDiscoverers.forEach(addDeviceDiscoverer);
-
-    Timer(const Duration(seconds: 1), () => enable(<String, Object?>{}));
   }
 
   /// An incrementing number used to generate unique ids.
@@ -880,20 +866,13 @@ class DeviceDomain extends Domain {
 
   void addDeviceDiscoverer(DeviceDiscovery discoverer) {
     if (!discoverer.supportsPlatform) {
-      printStatus(
-          '########## Skipping discoverer "${discoverer.runtimeType}" because it is not supported on this platform');
       return;
     }
 
     if (discoverer is PollingDeviceDiscovery) {
-      printStatus('########## Adding discoverer "${discoverer.runtimeType}"');
-
       _discoverers.add(discoverer);
       discoverer.onAdded.listen(_onDeviceEvent('device.added'));
       discoverer.onRemoved.listen(_onDeviceEvent('device.removed'));
-    } else {
-      printStatus(
-          '########## Ignoring discoverer "${discoverer.runtimeType}" because it is not polling');
     }
   }
 
@@ -936,7 +915,6 @@ class DeviceDomain extends Domain {
   /// Enable device events.
   Future<void> enable(Map<String, Object?> args) async {
     for (final PollingDeviceDiscovery discoverer in _discoverers) {
-      printStatus('########## Starting to poll "${discoverer.runtimeType}"');
       discoverer.startPolling();
     }
   }

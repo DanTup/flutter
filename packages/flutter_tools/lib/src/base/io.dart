@@ -33,6 +33,7 @@ library;
 // ignore_for_file: avoid_print
 
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io' as io
   show
     IOSink,
@@ -55,6 +56,7 @@ import 'dart:io' as io
 import 'package:file/file.dart';
 import 'package:meta/meta.dart';
 
+import '../globals.dart';
 import 'async_guard.dart';
 import 'platform.dart';
 import 'process.dart';
@@ -265,7 +267,10 @@ class Stdio {
   bool _stdoutDone = false;
   bool _stderrDone = false;
 
-  Stream<List<int>> get stdin => io.stdin;
+  Stream<List<int>> get stdin => io.stdin.map((List<int> event) {
+    printStatus('##### raw stdin (((((${utf8.decode(event)})))))');
+    return event;
+  });
 
   io.Stdout get stdout {
     if (_stdout != null) {

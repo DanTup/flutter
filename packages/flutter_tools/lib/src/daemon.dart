@@ -63,13 +63,18 @@ enum _InputStreamParseState {
 @visibleForTesting
 class DaemonInputStreamConverter {
   DaemonInputStreamConverter(this.inputStream) {
+    printStatus('##### Creating DaemonInputStreamConverter (but not listening yet)');
     // Lazily listen to the input stream.
     _controller.onListen = () {
+      printStatus('##### Starting to listen to input stream (because of listener)');
       final StreamSubscription<List<int>> subscription = inputStream.listen((List<int> chunk) {
+        printStatus('##### Processing chunk (${chunk.length})');
         _processChunk(chunk);
       }, onError: (Object error, StackTrace stackTrace) {
+        printStatus('##### Error on input stream: $error\n$stackTrace');
         _controller.addError(error, stackTrace);
       }, onDone: () {
+        printStatus('##### Input stream done');
         unawaited(_controller.close());
       });
 
@@ -244,10 +249,11 @@ class DaemonConnection {
     required Logger logger,
   }): _logger = logger,
       _daemonStreams = daemonStreams {
+        printStatus('##### setting up daemonStreams.inputStream handler');
     _commandSubscription = daemonStreams.inputStream.listen(
       _handleMessage,
       onError: (Object error, StackTrace stackTrace) {
-        printStatus('ERROR: $error\n$stackTrace');
+        printStatus('##### Stream errored: $error\n$stackTrace');
         // We have to listen for on error otherwise the error on the socket
         // will end up in the Zone error handler.
         // Do nothing here and let the stream close handlers handle shutting
@@ -333,12 +339,10 @@ class DaemonConnection {
   /// Event:
   /// {"event": <String>. "params": <optional, Object?>}
   void _handleMessage(DaemonMessage message) {
+    printStatus('##### handling message: ${jsonEncode(message.data)}');
     final Map<String, Object?> data = message.data;
-    printStatus('########## DaemonConnection._handleMessage 1');
     if (data['id'] != null) {
-    printStatus('########## DaemonConnection._handleMessage 2');
       if (data['method'] == null) {
-    printStatus('########## DaemonConnection._handleMessage 3');
         // This is a response to previously sent request.
         final String id = data['id']! as String;
         if (data['error'] != null) {
@@ -353,7 +357,6 @@ class DaemonConnection {
           _outgoingRequestCompleters.remove(id)?.complete(result);
         }
       } else {
-        printStatus('########## DaemonConnection._handleMessage 4 (adding message)');
         _incomingCommands.add(message);
       }
     } else if (data['event'] != null) {

@@ -16,7 +16,6 @@ import 'base/utils.dart';
 import 'build_info.dart';
 import 'devfs.dart';
 import 'device_port_forwarder.dart';
-import 'globals.dart';
 import 'project.dart';
 import 'vmservice.dart';
 
@@ -512,11 +511,9 @@ abstract class PollingDeviceDiscovery extends DeviceDiscovery {
     // Poll for devices immediately on the initial call for faster initial population.
     return Timer(initialCall ? Duration.zero : _pollingInterval, () async {
       try {
-        printStatus('########## Getting devices "$runtimeType"');
         final List<Device> devices = await pollingGetDevices(timeout: pollingTimeout);
         deviceNotifier!.updateWithNewList(devices);
       } on TimeoutException {
-        printStatus('########## Timed out polling devices in _initTimer');
         // Do nothing on a timeout.
       }
       // Subsequent timeouts after initial population should wait longer.
@@ -562,9 +559,7 @@ abstract class PollingDeviceDiscovery extends DeviceDiscovery {
     DeviceDiscoveryFilter? filter,
     bool resetCache = false,
   }) async {
-    printStatus('########## _populateDevices');
     if (deviceNotifier == null || resetCache) {
-      printStatus('########## _populateDevices -> poll');
       final List<Device> devices = await pollingGetDevices(timeout: timeout);
       // If the cache was populated while the polling was ongoing, do not
       // overwrite the cache unless it's explicitly refreshing the cache.
@@ -575,15 +570,9 @@ abstract class PollingDeviceDiscovery extends DeviceDiscovery {
       }
     }
 
-    printStatus('########## Found ${deviceNotifier!.items.length} items');
-
     // If a filter is provided, filter cache to only return devices matching.
     if (filter != null) {
-      final List<Device> filtered = await filter.filterDevices(deviceNotifier!.items);
-
-      printStatus('########## Filtered to ${filtered.length} items');
-
-      return filtered;
+      return filter.filterDevices(deviceNotifier!.items);
     }
     return deviceNotifier!.items;
   }

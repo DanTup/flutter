@@ -12,7 +12,6 @@ import '../base/os.dart';
 import '../build_info.dart';
 import '../desktop_device.dart';
 import '../device.dart';
-import '../globals.dart';
 import '../project.dart';
 import 'application_package.dart';
 import 'build_windows.dart';
@@ -96,10 +95,8 @@ class WindowsDevices extends PollingDeviceDiscovery {
   @override
   Future<List<Device>> pollingGetDevices({ Duration? timeout }) async {
     if (!canListAnything) {
-      printStatus('########## Skipping Windows polling because !canListAnything');
       return const <Device>[];
     }
-    printStatus('########## Returning Windows device');
     return <Device>[
       WindowsDevice(
         fileSystem: _fileSystem,
