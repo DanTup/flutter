@@ -236,44 +236,45 @@ class AndroidStudio {
   /// Android Studio found at that location is always returned, even if it is
   /// invalid.
   static AndroidStudio? latestValid() {
-    final Directory? configuredStudioDir = _configuredDir();
+    return null;
+    // final Directory? configuredStudioDir = _configuredDir();
 
-    // Find all available Studio installations.
-    final List<AndroidStudio> studios = allInstalled();
-    if (studios.isEmpty) {
-      return null;
-    }
+    // // Find all available Studio installations.
+    // final List<AndroidStudio> studios = allInstalled();
+    // if (studios.isEmpty) {
+    //   return null;
+    // }
 
-    final AndroidStudio? manuallyConfigured = studios
-      .where((AndroidStudio studio) => studio.configuredPath != null &&
-        configuredStudioDir != null &&
-        _pathsAreEqual(studio.configuredPath!, configuredStudioDir.path))
-      .firstOrNull;
+    // final AndroidStudio? manuallyConfigured = studios
+    //   .where((AndroidStudio studio) => studio.configuredPath != null &&
+    //     configuredStudioDir != null &&
+    //     _pathsAreEqual(studio.configuredPath!, configuredStudioDir.path))
+    //   .firstOrNull;
 
-    if (manuallyConfigured != null) {
-      return manuallyConfigured;
-    }
+    // if (manuallyConfigured != null) {
+    //   return manuallyConfigured;
+    // }
 
-    AndroidStudio? newest;
-    for (final AndroidStudio studio in studios.where((AndroidStudio s) => s.isValid)) {
-      if (newest == null) {
-        newest = studio;
-        continue;
-      }
+    // AndroidStudio? newest;
+    // for (final AndroidStudio studio in studios.where((AndroidStudio s) => s.isValid)) {
+    //   if (newest == null) {
+    //     newest = studio;
+    //     continue;
+    //   }
 
-      // We prefer installs with known versions.
-      if (studio.version != null && newest.version == null) {
-        newest = studio;
-      } else if (studio.version != null && newest.version != null &&
-          studio.version! > newest.version!) {
-        newest = studio;
-      } else if (studio.version == null && newest.version == null &&
-            studio.directory.compareTo(newest.directory) > 0) {
-        newest = studio;
-      }
-    }
+    //   // We prefer installs with known versions.
+    //   if (studio.version != null && newest.version == null) {
+    //     newest = studio;
+    //   } else if (studio.version != null && newest.version != null &&
+    //       studio.version! > newest.version!) {
+    //     newest = studio;
+    //   } else if (studio.version == null && newest.version == null &&
+    //         studio.directory.compareTo(newest.directory) > 0) {
+    //     newest = studio;
+    //   }
+    // }
 
-    return newest;
+    // return newest;
   }
 
   static List<AndroidStudio> allInstalled() =>

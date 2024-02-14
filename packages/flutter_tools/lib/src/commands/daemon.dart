@@ -65,6 +65,9 @@ class DaemonCommand extends FlutterCommand {
   final bool hidden;
 
   @override
+  bool get shouldUpdateCache => false;
+
+  @override
   Future<FlutterCommandResult> runCommand() async {
     if (argResults!['listen-on-tcp-port'] != null) {
       int? port;
@@ -160,11 +163,11 @@ class Daemon {
   }) {
     // Set up domains.
     registerDomain(daemonDomain = DaemonDomain(this));
-    registerDomain(appDomain = AppDomain(this));
+    // registerDomain(appDomain = AppDomain(this));
     registerDomain(deviceDomain = DeviceDomain(this));
     registerDomain(emulatorDomain = EmulatorDomain(this));
-    registerDomain(devToolsDomain = DevToolsDomain(this));
-    registerDomain(proxyDomain = ProxyDomain(this));
+    // registerDomain(devToolsDomain = DevToolsDomain(this));
+    // registerDomain(proxyDomain = ProxyDomain(this));
 
     // Start listening.
     printStatus('##### Listening to connection.incomingCommands');
@@ -335,10 +338,10 @@ abstract class Domain {
 /// This domain fires the `daemon.logMessage` event.
 class DaemonDomain extends Domain {
   DaemonDomain(Daemon daemon) : super(daemon, 'daemon') {
-    registerHandler('version', version);
+    // registerHandler('version', version);
     registerHandler('shutdown', shutdown);
-    registerHandler('getSupportedPlatforms', getSupportedPlatforms);
-    registerHandler('setNotifyVerbose', setNotifyVerbose);
+    // registerHandler('getSupportedPlatforms', getSupportedPlatforms);
+    // registerHandler('setNotifyVerbose', setNotifyVerbose);
 
     printStatus('##### sending daemon.connected');
     sendEvent(
@@ -837,22 +840,22 @@ typedef _DeviceEventHandler = void Function(Device device);
 /// `device.removed` events.
 class DeviceDomain extends Domain {
   DeviceDomain(Daemon daemon) : super(daemon, 'device') {
-    registerHandler('getDevices', getDevices);
-    registerHandler('discoverDevices', discoverDevices);
+    // registerHandler('getDevices', getDevices);
+    // registerHandler('discoverDevices', discoverDevices);
     registerHandler('enable', enable);
-    registerHandler('disable', disable);
-    registerHandler('forward', forward);
-    registerHandler('unforward', unforward);
-    registerHandler('supportsRuntimeMode', supportsRuntimeMode);
-    registerHandler('uploadApplicationPackage', uploadApplicationPackage);
-    registerHandler('logReader.start', startLogReader);
-    registerHandler('logReader.stop', stopLogReader);
-    registerHandler('startApp', startApp);
-    registerHandler('stopApp', stopApp);
-    registerHandler('takeScreenshot', takeScreenshot);
-    registerHandler('startDartDevelopmentService', startDartDevelopmentService);
-    registerHandler('shutdownDartDevelopmentService', shutdownDartDevelopmentService);
-    registerHandler('setExternalDevToolsUriForDartDevelopmentService', setExternalDevToolsUriForDartDevelopmentService);
+    // registerHandler('disable', disable);
+    // registerHandler('forward', forward);
+    // registerHandler('unforward', unforward);
+    // registerHandler('supportsRuntimeMode', supportsRuntimeMode);
+    // registerHandler('uploadApplicationPackage', uploadApplicationPackage);
+    // registerHandler('logReader.start', startLogReader);
+    // registerHandler('logReader.stop', stopLogReader);
+    // registerHandler('startApp', startApp);
+    // registerHandler('stopApp', stopApp);
+    // registerHandler('takeScreenshot', takeScreenshot);
+    // registerHandler('startDartDevelopmentService', startDartDevelopmentService);
+    // registerHandler('shutdownDartDevelopmentService', shutdownDartDevelopmentService);
+    // registerHandler('setExternalDevToolsUriForDartDevelopmentService', setExternalDevToolsUriForDartDevelopmentService);
 
     // Use the device manager discovery so that client provided device types
     // are usable via the daemon protocol.
@@ -914,9 +917,9 @@ class DeviceDomain extends Domain {
 
   /// Enable device events.
   Future<void> enable(Map<String, Object?> args) async {
-    for (final PollingDeviceDiscovery discoverer in _discoverers) {
-      discoverer.startPolling();
-    }
+    // for (final PollingDeviceDiscovery discoverer in _discoverers) {
+    //   discoverer.startPolling();
+    // }
   }
 
   /// Disable device events.
@@ -1370,8 +1373,8 @@ class AppInstance {
 class EmulatorDomain extends Domain {
   EmulatorDomain(Daemon daemon) : super(daemon, 'emulator') {
     registerHandler('getEmulators', getEmulators);
-    registerHandler('launch', launch);
-    registerHandler('create', create);
+    // registerHandler('launch', launch);
+    // registerHandler('create', create);
   }
 
   EmulatorManager emulators = EmulatorManager(
@@ -1384,8 +1387,9 @@ class EmulatorDomain extends Domain {
   );
 
   Future<List<Map<String, Object?>>> getEmulators([ Map<String, Object?>? args ]) async {
-    final List<Emulator> list = await emulators.getAllAvailableEmulators();
-    return list.map<Map<String, Object?>>(_emulatorToMap).toList();
+    return [];
+    // final List<Emulator> list = await emulators.getAllAvailableEmulators();
+    // return list.map<Map<String, Object?>>(_emulatorToMap).toList();
   }
 
   Future<void> launch(Map<String, Object?> args) async {
