@@ -27,14 +27,15 @@ class FakeCommand {
     this.duration = Duration.zero,
     this.onRun,
     this.exitCode = 0,
-    this.stdout = '',
+    this.stdout,
+    this.stdoutStream,
     this.stderr = '',
     this.completer,
     this.stdin,
     this.exception,
     this.outputFollowsExit = false,
     this.processStartMode,
-  });
+  }): assert(stdout == null || stdoutStream == null, 'Only one of stdio/stdoutStream can be supplied');
 
   /// The exact commands that must be matched for this [FakeCommand] to be
   /// considered correct.
@@ -86,9 +87,12 @@ class FakeCommand {
   /// SIGPIPE (-13) is 243.
   final int exitCode;
 
-  /// The output to simulate on stdout. This will be encoded as UTF-8 and
-  /// returned in one go.
-  final String stdout;
+  /// The output to simulate on stdout if provided as a String. This will be
+  /// encoded as UTF-8 and returned in one go.
+  final String? stdout;
+
+  /// The output to simulate on stdout if provided as a Stream.
+  final Stream<List<int>>? stdoutStream;
 
   /// The output to simulate on stderr. This will be encoded as UTF-8 and
   /// returned in one go.
@@ -150,7 +154,8 @@ class FakeProcess implements io.Process {
     this.pid = 1234,
     List<int> stderr = const <int>[],
     IOSink? stdin,
-    List<int> stdout = const <int>[],
+    List<int>? stdout,
+    Stream<List<int>>? stdoutStream,
     Completer<void>? completer,
     bool outputFollowsExit = false,
   }) : _exitCode = exitCode,
@@ -178,17 +183,23 @@ class FakeProcess implements io.Process {
       this.stderr = Stream<List<int>>.value(_stderr);
     }
 
-    if (_stdout.isEmpty) {
-      this.stdout = const Stream<List<int>>.empty();
-    } else if (outputFollowsExit) {
+    if (outputFollowsExit) {
+      final StreamController<List<int>> delayedStream = StreamController<List<int>>();
+      this.stdout = delayedStream.stream;
       // Wait for the process to exit before emitting stdout.
-      this.stdout = Stream<List<int>>.fromFuture(this.exitCode.then((_) {
-        // Return a Future so stdout isn't immediately available to those who
-        // await exitCode, but is available asynchronously later.
-        return Future<List<int>>(() => _stdout);
-      }));
+      this.exitCode.then((_) {
+        if (stdoutStream != null) {
+          delayedStream.addStream(stdoutStream);
+        } else {
+          delayedStream.add(stdout!);
+        }
+      });
     } else {
-      this.stdout = Stream<List<int>>.value(_stdout);
+      this.stdout = stdoutStream ?? (
+          _stdout != null
+              ? Stream<List<int>>.value(_stdout)
+              : const Stream<List<int>>.empty()
+      );
     }
   }
 
@@ -216,8 +227,10 @@ class FakeProcess implements io.Process {
   @override
   late final Stream<List<int>> stdout;
 
-  /// The raw byte content of stdout.
-  final List<int> _stdout;
+  /// The raw byte content of stdout if provided up-front.
+  ///
+  /// Will be `null` if stdout was provided as a stream.
+  final List<int>? _stdout;
 
   /// The list of [kill] signals this process received so far.
   @visibleForTesting
@@ -320,7 +333,10 @@ abstract class FakeProcessManager implements ProcessManager {
       pid: _pid,
       stderr: encoding?.encode(fakeCommand.stderr) ?? fakeCommand.stderr.codeUnits,
       stdin: fakeCommand.stdin,
-      stdout: encoding?.encode(fakeCommand.stdout) ?? fakeCommand.stdout.codeUnits,
+      stdoutStream: fakeCommand.stdoutStream,
+      stdout: fakeCommand.stdout != null
+          ? encoding?.encode(fakeCommand.stdout!) ?? fakeCommand.stdout!.codeUnits
+          : null,
       completer: fakeCommand.completer,
       outputFollowsExit: fakeCommand.outputFollowsExit,
     );
@@ -392,10 +408,11 @@ abstract class FakeProcessManager implements ProcessManager {
       environment: environment,
       encoding: stdoutEncoding,
     );
+    assert(process._stdout != null, 'To use runSync, the fake process must have a simple stdout value (not a stream)');
     return io.ProcessResult(
       process.pid,
       process._exitCode,
-      stdoutEncoding == null ? process._stdout : stdoutEncoding.decode(process._stdout),
+      stdoutEncoding == null ? process._stdout : stdoutEncoding.decode(process._stdout!),
       stderrEncoding == null ? process._stderr : stderrEncoding.decode(process._stderr),
     );
   }

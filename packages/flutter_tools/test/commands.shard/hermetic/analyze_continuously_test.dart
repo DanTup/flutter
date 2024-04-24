@@ -318,6 +318,81 @@ void main() {
     expect(processManager, hasNoRemainingExpectations);
   });
 
+testUsingContext('Records accurate timings of analysis', () async {
+    final MemoryFileSystem fileSystem = MemoryFileSystem.test();
+    fileSystem.directory('directoryA').childFile('foo').createSync(recursive: true);
+
+    final BufferLogger logger = BufferLogger.test();
+
+    final Completer<void> completer = Completer<void>();
+    final StreamController<List<int>> stdin = StreamController<List<int>>();
+    final StreamController<List<int>> stdout = StreamController<List<int>>();
+    final FakeProcessManager processManager = FakeProcessManager.list(
+      <FakeCommand>[
+        FakeCommand(
+          command: const <String>[
+            'Artifact.engineDartSdkPath/bin/dart',
+            '--disable-dart-dev',
+            'Artifact.engineDartSdkPath/bin/snapshots/analysis_server.dart.snapshot',
+            '--disable-server-feature-completion',
+            '--disable-server-feature-search',
+            '--sdk',
+            'Artifact.engineDartSdkPath',
+            '--suppress-analytics',
+          ],
+          stdin: IOSink(stdin.sink),
+          stdoutStream: stdout.stream,
+        ),
+      ]);
+
+    final Artifacts artifacts = Artifacts.test();
+    final AnalyzeCommand command = AnalyzeCommand(
+      terminal: Terminal.test(),
+      artifacts: artifacts,
+      logger: logger,
+      platform: FakePlatform(),
+      fileSystem: fileSystem,
+      processManager: processManager,
+      allProjectValidators: <ProjectValidator>[],
+      suppressAnalytics: true,
+    );
+
+    await FakeAsync().run((FakeAsync time) async {
+      void waitForOutput(String output) {
+        while (!logger.statusText.contains(output)) {
+          time.flushMicrotasks();
+        }
+      }
+
+      final TestFlutterCommandRunner commandRunner = TestFlutterCommandRunner();
+      commandRunner.addCommand(command);
+      unawaited(commandRunner.run(<String>['analyze', '--watch']));
+
+      // First analysis should take > 1 minute.
+      stdout.add('{"event":"server.status","params":{"analysis":{"isAnalyzing":true}}}\n'.codeUnits);
+      waitForOutput('Analyzing /...');
+      time.elapse(const Duration(minutes: 1, seconds: 1));
+      stdout.add('{"event":"server.status","params":{"analysis":{"isAnalyzing":false}}}\n'.codeUnits);
+      waitForOutput('No issues found');
+
+      // Second analysis should take > 1 hour and includes an error so we
+      // can tell we've completed.
+      stdout.add('{"event":"server.status","params":{"analysis":{"isAnalyzing":true}}}\n'.codeUnits);
+      waitForOutput('\n\nAnalyzing /...');
+      time.elapse(const Duration(hours: 1, seconds: 1));
+      stdout.add('''{"event":"analysis.errors","params":{"file":"/directoryA/foo","errors":[{"type":"TestError","message":"It's an error.","severity":"warning","code":"500","location":{"file":"/directoryA/foo","startLine": 100,"startColumn":5,"offset":0}}]}}\n'''.codeUnits);
+      stdout.add('{"event":"server.status","params":{"analysis":{"isAnalyzing":false}}}\n'.codeUnits);
+
+      waitForOutput('1 issue found');
+      completer.complete();
+      return completer.future;
+    });
+    expect(logger.statusText, contains('analyzed 0 files (ran in 6'));
+    expect(logger.statusText, contains('analyzed 1 files (ran in ??????'));
+    expect(logger.errorText, isEmpty);
+    expect(processManager, hasNoRemainingExpectations);
+  });
+
   testUsingContext('AnalysisService --watch skips errors from non-files', () async {
     final BufferLogger logger = BufferLogger.test();
     final Completer<void> completer = Completer<void>();

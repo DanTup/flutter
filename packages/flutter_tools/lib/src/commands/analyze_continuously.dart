@@ -86,7 +86,7 @@ class AnalyzeContinuously extends AnalyzeBase {
       }
       analysisStatus = logger.startProgress('Analyzing $analysisTarget...');
       analyzedPaths.clear();
-      analysisTimer.start();
+      analysisTimer..reset()..start();
     } else {
       analysisStatus?.stop();
       analysisStatus = null;
