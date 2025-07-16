@@ -52,6 +52,8 @@ class WebDriverService extends DriverService {
   late ResidentRunner _residentRunner;
   Uri? _webUri;
 
+  Future<DebugConnectionInfo>? _debugInfoFuture;
+
   @visibleForTesting
   Uri? get webUri => _webUri;
 
@@ -110,11 +112,15 @@ class WebDriverService extends DriverService {
       outputPreferences: _outputPreferences,
       systemClock: globals.systemClock,
     );
-    final appStartedCompleter = Completer<void>.sync();
+    final Completer<void> appStartedCompleter = Completer<void>.sync();
+    final Completer<DebugConnectionInfo> connectionInfoCompleter =
+        Completer<DebugConnectionInfo>.sync();
     final Future<int?> runFuture = _residentRunner.run(
       appStartedCompleter: appStartedCompleter,
+      connectionInfoCompleter: connectionInfoCompleter,
       route: route,
     );
+    _debugInfoFuture = connectionInfoCompleter.future;
 
     var isAppStarted = false;
     await Future.any(<Future<Object?>>[
@@ -230,7 +236,13 @@ class WebDriverService extends DriverService {
       environment: <String, String>{
         ..._platform.environment,
         'VM_SERVICE_URL': _webUri.toString(),
-        ..._additionalDriverEnvironment(webDriver, browserName, androidEmulator),
+        'VM_SERVICE_URL_REAL': ((await _debugInfoFuture)?.wsUri ?? _webUri)
+            .toString(),
+        ..._additionalDriverEnvironment(
+          webDriver,
+          browserName,
+          androidEmulator,
+        ),
       },
     );
     await webDriver.quit();
