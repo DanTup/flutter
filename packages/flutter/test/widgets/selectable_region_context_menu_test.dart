@@ -15,6 +15,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:web/web.dart' as web;
 
 import 'editable_text_tester.dart';
+import 'keyboard_utils.dart';
 import 'web_platform_view_registry_utils.dart';
 
 extension on web.HTMLCollection {
@@ -191,23 +192,15 @@ void main() {
     web.document.body!.append(element);
     addTearDown(() => element.remove());
 
-    Future<void> selectRegion(FocusNode focusNode) async {
-      focusNode.requestFocus();
-      await tester.pump();
-      PlatformSelectableRegionContextMenu.debugActiveClient!.dispatchSelectionEvent(
-        const SelectAllSelectionEvent(),
-      );
-    }
-
     // Select all text in the first region, then copy it without a mouse event.
-    await selectRegion(focusNodeA);
+    await selectAll(tester, focusNodeA);
     web.document.dispatchEvent(web.ClipboardEvent('copy'));
     await tester.pump();
     expect(element.innerText, 'first selection');
     expect(web.window.getSelection()?.toString(), 'first selection');
 
     // Select all text in the second region, then copy it without a mouse event.
-    await selectRegion(focusNodeB);
+    await selectAll(tester, focusNodeB);
     web.document.dispatchEvent(web.ClipboardEvent('copy'));
     await tester.pump();
     expect(element.innerText, 'second selection');
@@ -217,6 +210,49 @@ void main() {
     expect(PlatformSelectableRegionContextMenu.debugIsCopyEventListenerAttached, isTrue);
     await tester.pumpWidget(const TestWidgetsApp(home: SizedBox.shrink()));
     expect(PlatformSelectableRegionContextMenu.debugIsCopyEventListenerAttached, isFalse);
+  }, variant: _browserContextMenuEnabledVariants);
+
+  testWidgets('keyboard copy is delegated to the browser', (WidgetTester tester) async {
+    final focusNode = FocusNode();
+    addTearDown(focusNode.dispose);
+
+    // Detect if Flutter handles the keypresses and calls Clipboard.setData.
+    var flutterHandledCopy = false;
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(
+      SystemChannels.platform,
+      (MethodCall call) async {
+        flutterHandledCopy = flutterHandledCopy || (call.method == 'Clipboard.setData');
+        return null;
+      },
+    );
+    addTearDown(
+      () => TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(SystemChannels.platform, null),
+    );
+
+    await tester.pumpWidget(
+      TestWidgetsApp(
+        home: SelectableRegion(
+          focusNode: focusNode,
+          selectionControls: emptyTextSelectionControls,
+          child: const Text('Some text'),
+        ),
+      ),
+    );
+
+    await selectAll(tester, focusNode);
+
+    // Send Cmd+C or Ctrl+C depending on platform.
+    final bool isApplePlatform =
+        defaultTargetPlatform == TargetPlatform.iOS ||
+        defaultTargetPlatform == TargetPlatform.macOS;
+    await sendKeyCombination(
+      tester,
+      SingleActivator(LogicalKeyboardKey.keyC, control: !isApplePlatform, meta: isApplePlatform),
+    );
+
+    // Expect that Flutter did not handle the event and call the clipboard APIs.
+    expect(flutterHandledCopy, isFalse);
   }, variant: _browserContextMenuEnabledVariants);
 
   // Regression test for https://github.com/flutter/flutter/issues/189575.
@@ -552,6 +588,14 @@ void removeAllStyleElements() {
       element.remove();
     }
   }
+}
+
+Future<void> selectAll(WidgetTester tester, FocusNode focusNode) async {
+  focusNode.requestFocus();
+  await tester.pump();
+  PlatformSelectableRegionContextMenu.debugActiveClient!.dispatchSelectionEvent(
+    const SelectAllSelectionEvent(),
+  );
 }
 
 int getNumberOfStyleElements() {

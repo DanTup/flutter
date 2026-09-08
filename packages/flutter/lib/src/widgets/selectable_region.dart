@@ -2037,6 +2037,14 @@ class _CopySelectionAction extends _NonOverrideAction<CopySelectionTextIntent> {
   final SelectableRegionState state;
 
   @override
+  bool isEnabled(CopySelectionTextIntent intent, [BuildContext? context]) {
+    // On web, if the native context menu is enabled, also allow Copy to fall
+    // back the native browser handling. This way if we're in a sandboxed iframe
+    // where clipboard APIs are disabled, copy will still work.
+    return !state._webContextMenuEnabled;
+  }
+
+  @override
   void invokeAction(CopySelectionTextIntent intent, [BuildContext? context]) {
     state._copy();
   }
