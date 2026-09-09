@@ -470,7 +470,7 @@ final class WidgetPreviewStartCommand extends WidgetPreviewSubCommandBase with C
 
   void onChangeDetected(FlutterWidgetPreviews update) {
     _previewCodeGenerator.populatePreviewsInGeneratedPreviewScaffoldLsp(update);
-    logger.printWarning('Triggering reload based on update to script: ${update.scriptUris}');
+    logger.printStatus('Triggering reload based on update to script: ${update.scriptUris}');
     _widgetPreviewApp?.restart();
   }
 

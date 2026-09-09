@@ -193,13 +193,10 @@ class LspPreviewDetector {
     if (!filePath.isDartFile) {
       return;
     }
-    logger.printWarning('Handling file change ($filePath)');
     previewAnalytics.startPreviewReloadStopwatch();
     FlutterWidgetPreviews? result;
     try {
-      logger.printWarning('Waiting for analysis... ($filePath)');
       await _analysisServer?.waitForAnalysis();
-      logger.printWarning('Analysis done! ($filePath)');
       var retries = 5;
       while (retries > 0) {
         if (_disposed || shutdownHooks.isShuttingDown) {
@@ -209,7 +206,6 @@ class LspPreviewDetector {
           result = await dtd.getFlutterWidgetPreviews().timeout(const Duration(seconds: 5));
           break;
         } catch (e) {
-          logger.printWarning('Exception $e with $retries remaining! ($filePath)');
           retries--;
           if (retries == 0) {
             if (_disposed || shutdownHooks.isShuttingDown) {
@@ -231,7 +227,6 @@ class LspPreviewDetector {
         }
       }
     } catch (e) {
-      logger.printWarning('Exception $e! ($filePath)');
       previewAnalytics.resetPreviewReloadStopwatch();
       if (_disposed || shutdownHooks.isShuttingDown) {
         logger.printTrace('Failed to get widget previews during shutdown: $e');

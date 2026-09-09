@@ -169,9 +169,7 @@ class WidgetPreviewDtdServices {
   }
 
   Future<FlutterWidgetPreviews> getFlutterWidgetPreviews() async {
-    logger.printWarning('Running _waitForLspService from getFlutterWidgetPreviews');
     await _waitForLspService();
-    logger.printWarning('Done running _waitForLspService from getFlutterWidgetPreviews');
     const maxAttempts = 50;
     for (var attempts = 0; attempts < maxAttempts; attempts++) {
       try {
@@ -193,13 +191,7 @@ class WidgetPreviewDtdServices {
   }
 
   Future<FlutterWidgetPreviews> getFlutterWidgetPreviewsForFile({required String filePath}) async {
-    logger.printWarning(
-      'Running _waitForLspService from getFlutterWidgetPreviewsForFile ($filePath)',
-    );
     await _waitForLspService();
-    logger.printWarning(
-      'Done running _waitForLspService from getFlutterWidgetPreviewsForFile ($filePath)',
-    );
     const maxAttempts = 50;
     for (var attempts = 0; attempts < maxAttempts; attempts++) {
       try {
@@ -210,9 +202,6 @@ class WidgetPreviewDtdServices {
         );
         return FlutterWidgetPreviews.fromJson(result.result['result']! as Map<String, Object?>);
       } on RpcException catch (e) {
-        logger.printWarning(
-          'Exception running _waitForLspService from getFlutterWidgetPreviewsForFile ($filePath)',
-        );
         if (e.code == -32601 && attempts < maxAttempts - 1) {
           // Method not found
           await Future<void>.delayed(const Duration(milliseconds: 200));
