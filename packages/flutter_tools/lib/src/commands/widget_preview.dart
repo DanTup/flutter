@@ -387,17 +387,22 @@ final class WidgetPreviewStartCommand extends WidgetPreviewSubCommandBase with C
     });
 
     if (legacyDetection) {
+      logger.printWarning('Using legacy detection!');
       final PreviewDependencyGraph graph = await _previewDetector.initialize();
       _previewCodeGenerator.populatePreviewsInGeneratedPreviewScaffold(graph);
     } else {
+      logger.printWarning('Using new detection... configuring DTD');
       await configureDtd();
 
+      logger.printWarning('initializing...');
       await _lspPreviewDetector.initialize();
 
       // Wait for the initial analysis to complete to ensure the analysis server
       // has registered the widget preview RPC methods.
+      logger.printWarning('waiting for analysis....');
       await _lspPreviewDetector.waitForAnalysis();
 
+      logger.printWarning('populating dtd info...');
       _previewCodeGenerator.populateDtdConnectionInfo(
         dtdUri: _dtdService.dtdUri!,
         widgetPreviewServiceName: _dtdService.widgetPreviewService,
@@ -406,6 +411,7 @@ final class WidgetPreviewStartCommand extends WidgetPreviewSubCommandBase with C
       );
 
       final FlutterWidgetPreviews originalPreviews;
+      logger.printWarning('Getting widget previews!!');
       try {
         originalPreviews = await _dtdService.getFlutterWidgetPreviews();
       } on Exception catch (e) {

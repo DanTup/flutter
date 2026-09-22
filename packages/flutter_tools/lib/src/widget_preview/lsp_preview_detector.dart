@@ -189,8 +189,10 @@ class LspPreviewDetector {
   /// any in-progress initialization or analysis.
   Future<void> waitForAnalysis() async {
     if (_analysisServer != null) {
+      logger.printWarning('using analysis server to wait for analysis!');
       await _analysisServer!.waitForAnalysis();
     } else {
+      logger.printWarning('using dtd to wait for analysis');
       await dtd.waitForAnalysis();
     }
   }

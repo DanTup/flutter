@@ -5,6 +5,7 @@
 import 'dart:async';
 
 import 'package:collection/collection.dart';
+import 'package:dart_service_protocol_shared/src/client.dart';
 import 'package:dtd/dtd.dart';
 import 'package:json_rpc_2/json_rpc_2.dart';
 import 'package:meta/meta.dart';
@@ -161,9 +162,20 @@ class WidgetPreviewDtdServices {
 
     _lspServiceAvailable = false;
     final RegisteredServicesResponse registeredServices = await _dtd!.getRegisteredServices();
+    final ClientServiceInfo? firstLspService = registeredServices.clientServices.firstWhereOrNull(
+      (service) => service.name == kLspStream,
+    );
+
     _lspServiceAvailable =
-        registeredServices.dtdServices.contains(kLspStream) ||
-        registeredServices.clientServices.any((service) => service.name == kLspStream);
+        registeredServices.dtdServices.contains(kLspStream) || firstLspService != null;
+
+    if (_lspServiceAvailable) {
+      logger.printTrace('LSP service was already available during startup!');
+
+      for (final Object? service in firstLspService?.methods.keys ?? []) {
+        logger.printStatus('   LSP service: $service');
+      }
+    }
 
     await _registerServices();
     logger.printTrace('Connected to DTD and registered services.');
@@ -213,26 +225,38 @@ class WidgetPreviewDtdServices {
   Future<void>? _waitForLspServiceFuture;
 
   Future<void> _waitForLspService() async {
+    logger.printWarning('_waitForLspService 1');
     if (_lspServiceAvailable) {
+      logger.printWarning('_waitForLspService 2 - already available!');
       return;
     }
     final Future<void>? future = _waitForLspServiceFuture;
     if (future != null) {
+      logger.printWarning('_waitForLspService 3 - already got future, using');
       return future;
     }
+    logger.printWarning('_waitForLspService 4 - will wait');
     _waitForLspServiceFuture = _waitForLspServiceHelper();
     try {
+      logger.printWarning('_waitForLspService 5 - waiting');
       await _waitForLspServiceFuture;
     } finally {
+      logger.printWarning('_waitForLspService 6 - done!');
       _waitForLspServiceFuture = null;
     }
   }
 
   Future<void> _waitForLspServiceHelper() async {
+    logger.printStatus('_waitForLspServiceHelper 1');
     final lspRegisteredCompleter = Completer<void>();
 
     const kServiceStream = 'Service';
+    logger.printStatus('_waitForLspServiceHelper 2');
     await _dtd!.safeStreamListen(kServiceStream);
+    logger.printStatus('_waitForLspServiceHelper 3');
+    _dtd!.onEvent(kLspStream).listen((DTDEvent event) {
+      logger.printStatus('LSP DTD Event: ${event.kind}');
+    });
     final StreamSubscription<DTDEvent> serviceSubscription = _dtd!.onEvent(kServiceStream).listen((
       DTDEvent event,
     ) {
@@ -240,6 +264,7 @@ class WidgetPreviewDtdServices {
         return;
       }
       if (event case DTDEvent(kind: 'ServiceRegistered', data: {'service': kLspStream})) {
+        logger.printStatus('Saw LSP service registered, considering done');
         _lspServiceAvailable = true;
         lspRegisteredCompleter.complete();
       }
@@ -247,10 +272,17 @@ class WidgetPreviewDtdServices {
 
     try {
       final RegisteredServicesResponse registeredServices = await _dtd!.getRegisteredServices();
-      final bool alreadyRegistered =
-          registeredServices.dtdServices.contains(kLspStream) ||
-          registeredServices.clientServices.any((service) => service.name == kLspStream);
+      final bool hasLspStream = registeredServices.dtdServices.contains(kLspStream);
+      final ClientServiceInfo? firstLspService = registeredServices.clientServices.firstWhereOrNull(
+        (service) => service.name == kLspStream,
+      );
+      final bool alreadyRegistered = hasLspStream || firstLspService != null;
       if (alreadyRegistered) {
+        logger.printStatus('_waitForLspServiceHelper: already registered, so continuing');
+        logger.printStatus('hasLspStream? $hasLspStream');
+        for (final Object? service in firstLspService?.methods.keys ?? []) {
+          logger.printStatus('   LSP service: $service');
+        }
         _lspServiceAvailable = true;
         lspRegisteredCompleter.complete();
       } else {
