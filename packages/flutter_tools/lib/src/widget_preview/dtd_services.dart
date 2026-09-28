@@ -5,6 +5,7 @@
 import 'dart:async';
 
 import 'package:collection/collection.dart';
+import 'package:dart_service_protocol_shared/src/client.dart';
 import 'package:dtd/dtd.dart';
 import 'package:json_rpc_2/json_rpc_2.dart';
 import 'package:meta/meta.dart';
@@ -235,26 +236,47 @@ class WidgetPreviewDtdServices {
   }
 
   bool _areRequiredLspServicesRegistered(RegisteredServicesResponse registeredServices) {
-    return registeredServices.clientServices.any(
+    logger.printWarning('Checking if all services are registered...');
+    for (final ClientServiceInfo service in registeredServices.clientServices) {
+      logger.printWarning('   - ${service.name}');
+      for (final String method in service.methods.keys) {
+        logger.printWarning('       - $method');
+      }
+    }
+    final bool res = registeredServices.clientServices.any(
       (service) =>
           service.name == kLspStream && kRequiredLspServices.every(service.methods.containsKey),
     );
+
+    if (res) {
+      logger.printWarning('YES, all are registered!');
+    } else {
+      logger.printWarning('NO, all are registered!');
+    }
+
+    return res;
   }
 
   Future<void> _waitForLspServiceHelper() async {
     final lspInitializedCompleter = Completer<void>();
 
+    logger.printWarning('Starting to listen for event...');
     final StreamSubscription<DTDEvent> lspSubscription = _dtd!.onEvent(kLspStream).listen((
       DTDEvent event,
     ) {
+      logger.printWarning('Got event on LSP stream: ${event.kind}');
       if (lspInitializedCompleter.isCompleted) {
+        logger.printWarning('LSP is already initialized, bailing');
         return;
       }
       if (event.kind == kLspInitializedEvent) {
+        logger.printWarning('Is initialized event, we are done!');
         _allLspServicesRegistered = true;
         lspInitializedCompleter.complete();
       }
     });
+    logger.printWarning('(listening)');
+
     try {
       await _dtd!.safeStreamListen(kLspStream);
       final RegisteredServicesResponse registeredServices = await _dtd!.getRegisteredServices();
